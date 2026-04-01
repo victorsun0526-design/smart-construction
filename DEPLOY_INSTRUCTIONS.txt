@@ -1,0 +1,94 @@
+SMART CONSTRUCTION PLATFORM - DEPLOYMENT INSTRUCTIONS
+=====================================================
+
+QUICK START (3 MINUTES):
+1. Double click "deploy.bat"
+2. Select option 1 (Vercel)
+3. Follow the steps
+
+YOUR WEBSITE WILL BE:
+https://smart-construction.vercel.app
+
+TEST ACCOUNT:
+Username: admin
+Password: 123456
+
+DETAILED STEPS:
+---------------
+1. CREATE GITHUB ACCOUNT
+   - Go to https://github.com
+   - Click "Sign up"
+   - Register with email
+
+2. CREATE REPOSITORY
+   - Login to GitHub
+   - Click "+" → "New repository"
+   - Name: smart-construction
+   - Click "Create repository"
+
+3. UPLOAD FILES
+   Method A (Recommended):
+   - Download GitHub Desktop: https://desktop.github.com
+   - Clone repository
+   - Copy all files to repository folder
+   - Commit and push
+
+   Method B:
+   - On GitHub page, click "Upload files"
+   - Drag and drop all files
+   - Click "Commit changes"
+
+4. CREATE VERCEL ACCOUNT
+   - Go to https://vercel.com
+   - Click "Continue with GitHub"
+   - Authorize access
+
+5. DEPLOY TO VERCEL
+   - Login to Vercel
+   - Click "New Project"
+   - Select your repository
+   - Click "Deploy"
+   - Wait 1-2 minutes
+
+FEATURES INCLUDED:
+-----------------
+- 7 management modules
+- 18 sub-modules
+- Mobile responsive design
+- Free HTTPS (SSL)
+- Global CDN
+- Auto deployment
+
+TESTING:
+-------
+1. Open your website
+2. Login with admin/123456
+3. Test all modules
+4. Test on mobile
+
+TROUBLESHOOTING:
+---------------
+Problem: Files not uploading
+Solution: Use GitHub Desktop instead of web upload
+
+Problem: Deployment fails
+Solution: Check Vercel logs for errors
+
+Problem: Website shows blank
+Solution: Check browser console (F12)
+
+SUPPORT:
+-------
+1. Check deployment guide files
+2. Search error messages online
+3. Contact for help
+
+FILES TO USE:
+------------
+- deploy.bat - Main deployment wizard
+- test.html - Test file existence
+- index.html - Home page
+- login.html - Login page
+- dashboard.html - Main dashboard
+
+GOOD LUCK! YOUR PLATFORM WILL BE ONLINE IN MINUTES!

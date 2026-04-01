@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Construction Platform - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .status {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .pass {
+            background: #2ecc71;
+            color: white;
+        }
+        .fail {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart Construction Platform - File Test</h1>
+        
+        <div class="test-section">
+            <h2>File Check</h2>
+            <div class="test-item">
+                <span class="status" id="index-status">?</span>
+                <span>index.html</span>
+                <span id="index-result">Checking...</span>
+            </div>
+            <div class="test-item">
+                <span class="status" id="login-status">?</span>
+                <span>login.html</span>
+                <span id="login-result">Checking...</span>
+            </div>
+            <div class="test-item">
+                <span class="status" id="dashboard-status">?</span>
+                <span>dashboard.html</span>
+                <span id="dashboard-result">Checking...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Quick Links</h2>
+            <div>
+                <a href="index.html" class="btn" target="_blank">Open Home Page</a>
+                <a href="login.html" class="btn" target="_blank">Open Login Page</a>
+                <a href="dashboard.html" class="btn" target="_blank">Open Dashboard</a>
+                <a href="deploy.bat" class="btn">Run Deployment Wizard</a>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Deployment Instructions</h2>
+            <p><strong>Simple 3-Step Deployment:</strong></p>
+            <ol>
+                <li>Double click <strong>deploy.bat</strong></li>
+                <li>Select option 1 (Vercel deployment)</li>
+                <li>Follow the step-by-step instructions</li>
+            </ol>
+            <p>Your website will be: <strong>https://smart-construction.vercel.app</strong></p>
+            <p>Test account: <strong>admin / 123456</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Test file existence
+        function testFile(file, statusId, resultId) {
+            fetch(file)
+                .then(response => {
+                    const status = document.getElementById(statusId);
+                    const result = document.getElementById(resultId);
+                    
+                    if (response.ok) {
+                        status.className = 'status pass';
+                        status.textContent = '✓';
+                        result.textContent = 'File exists';
+                        result.style.color = '#2ecc71';
+                    } else {
+                        status.className = 'status fail';
+                        status.textContent = '✗';
+                        result.textContent = 'File missing';
+                        result.style.color = '#e74c3c';
+                    }
+                })
+                .catch(error => {
+                    const status = document.getElementById(statusId);
+                    const result = document.getElementById(resultId);
+                    status.className = 'status fail';
+                    status.textContent = '✗';
+                    result.textContent = 'Check failed';
+                    result.style.color = '#e74c3c';
+                });
+        }
+        
+        // Run tests
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => testFile('index.html', 'index-status', 'index-result'), 500);
+            setTimeout(() => testFile('login.html', 'login-status', 'login-result'), 1000);
+            setTimeout(() => testFile('dashboard.html', 'dashboard-status', 'dashboard-result'), 1500);
+        });
+    </script>
+</body>
+</html>

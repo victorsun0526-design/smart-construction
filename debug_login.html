@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录调试</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .debug-info { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>登录功能调试</h1>
+    
+    <div class="debug-info">
+        <h3>当前登录状态：</h3>
+        <div id="status"></div>
+    </div>
+    
+    <div class="debug-info">
+        <h3>测试步骤：</h3>
+        <ol>
+            <li>点击"清除登录状态"</li>
+            <li>点击"打开登录页面"</li>
+            <li>使用 admin / 123456 登录</li>
+            <li>观察是否跳转到首页</li>
+        </ol>
+    </div>
+    
+    <button onclick="clearLogin()">清除登录状态</button>
+    <button onclick="openLogin()">打开登录页面</button>
+    <button onclick="checkLocalStorage()">检查LocalStorage</button>
+    <button onclick="testRedirect()">测试跳转逻辑</button>
+    
+    <div class="debug-info">
+        <h3>调试信息：</h3>
+        <div id="debug"></div>
+    </div>
+    
+    <script>
+        function log(msg) {
+            const debug = document.getElementById('debug');
+            debug.innerHTML += `<p>${new Date().toLocaleTimeString()}: ${msg}</p>`;
+        }
+        
+        function updateStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const username = localStorage.getItem('username') || '未登录';
+            document.getElementById('status').innerHTML = `
+                <p>登录状态: <strong>${isLoggedIn ? '✅ 已登录' : '❌ 未登录'}</strong></p>
+                <p>用户名: <strong>${username}</strong></p>
+                <p>记住我: <strong>${localStorage.getItem('rememberMe') === 'true' ? '是' : '否'}</strong></p>
+            `;
+        }
+        
+        function clearLogin() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            localStorage.removeItem('rememberMe');
+            log('已清除登录状态');
+            updateStatus();
+        }
+        
+        function openLogin() {
+            log('打开登录页面...');
+            window.open('login.html', '_blank');
+        }
+        
+        function checkLocalStorage() {
+            log('检查LocalStorage:');
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                log(`${key} = ${value}`);
+            }
+        }
+        
+        function testRedirect() {
+            log('测试跳转逻辑...');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                log('✅ 已登录，应该跳转到 index.html');
+                window.location.href = 'index.html';
+            } else {
+                log('❌ 未登录，应该跳转到 login.html');
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // 页面加载时更新状态
+        updateStatus();
+        log('页面加载完成');
+        
+        // 监听storage变化
+        window.addEventListener('storage', function(e) {
+            log(`Storage变化: ${e.key} = ${e.newValue}`);
+            updateStatus();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试修复 - 智慧工地平台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧工地平台 - 修复测试</h1>
+    
+    <div class="test-section">
+        <h2>问题1: 进度管理模块图标大小不一致</h2>
+        <p>✅ 已修复 - 进度管理模块现在有正确的图标容器</p>
+        <p>修复方法: 添加了缺失的 <code>&lt;div class="module-icon progress"&gt;</code> 容器</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>问题2: 登录后跳转回登录页面</h2>
+        <p>✅ 已修复 - 现在登录成功后正确跳转到首页</p>
+        <p>修复内容:</p>
+        <ul>
+            <li>添加了登录状态检查 (localStorage.isLoggedIn)</li>
+            <li>登录成功后保存登录状态</li>
+            <li>首页自动更新导航栏显示用户名</li>
+            <li>已登录用户访问登录页会自动跳转到首页</li>
+            <li>添加了退出登录功能</li>
+        </ul>
+        
+        <h3>测试步骤:</h3>
+        <ol>
+            <li>点击下面的"清除登录状态"按钮</li>
+            <li>打开 <a href="login.html" target="_blank">login.html</a></li>
+            <li>使用测试账号登录: admin / 123456</li>
+            <li>应该看到"登录成功"提示并跳转到首页</li>
+            <li>首页导航栏应该显示用户名"admin"</li>
+            <li>点击用户名可以退出登录</li>
+        </ol>
+        
+        <button onclick="clearLoginState()">清除登录状态</button>
+        <button onclick="checkLoginState()">检查当前登录状态</button>
+        <button onclick="simulateLogin()">模拟登录</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>测试结果:</h2>
+        <div id="testResult"></div>
+    </div>
+    
+    <script>
+        function clearLoginState() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            localStorage.removeItem('rememberMe');
+            document.getElementById('testResult').innerHTML = 
+                '<p class="success">✅ 登录状态已清除</p>';
+        }
+        
+        function checkLoginState() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const username = localStorage.getItem('username') || '未登录';
+            const rememberMe = localStorage.getItem('rememberMe') === 'true';
+            
+            document.getElementById('testResult').innerHTML = `
+                <p>登录状态: ${isLoggedIn ? '✅ 已登录' : '❌ 未登录'}</p>
+                <p>用户名: ${username}</p>
+                <p>记住我: ${rememberMe ? '是' : '否'}</p>
+            `;
+        }
+        
+        function simulateLogin() {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('username', 'admin');
+            document.getElementById('testResult').innerHTML = 
+                '<p class="success">✅ 模拟登录成功</p>' +
+                '<p>现在可以打开 <a href="index.html" target="_blank">index.html</a> 查看效果</p>';
+        }
+        
+        // 页面加载时检查状态
+        window.onload = function() {
+            checkLoginState();
+        };
+    </script>
+</body>
+</html>

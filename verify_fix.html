@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修复验证</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .issue { background: #ffe6e6; padding: 15px; margin: 10px 0; border-left: 4px solid red; }
+        .fixed { background: #e6ffe6; padding: 15px; margin: 10px 0; border-left: 4px solid green; }
+        .test-btn { padding: 10px 20px; margin: 5px; background: #3498db; color: white; border: none; cursor: pointer; }
+        .test-btn:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <h1>修复验证</h1>
+    
+    <div class="issue">
+        <h2>问题1: 进度管理模块图标大小不一致</h2>
+        <p><strong>状态:</strong> <span id="issue1-status">待验证</span></p>
+        <p><strong>描述:</strong> 首页的进度管理模块图标缺少容器，导致大小与其他模块不同</p>
+        <button class="test-btn" onclick="verifyIssue1()">验证修复</button>
+        <button class="test-btn" onclick="viewSource()">查看源代码</button>
+    </div>
+    
+    <div class="issue">
+        <h2>问题2: 登录后跳转回登录页面</h2>
+        <p><strong>状态:</strong> <span id="issue2-status">待验证</span></p>
+        <p><strong>描述:</strong> 使用测试账号登录后，虽然提示成功但仍然停留在登录页面</p>
+        <button class="test-btn" onclick="verifyIssue2()">验证修复</button>
+        <button class="test-btn" onclick="testLogin()">测试登录</button>
+    </div>
+    
+    <div class="fixed">
+        <h2>修复措施</h2>
+        <h3>问题1修复:</h3>
+        <pre><code>// 修复前
+&lt;div class="module-card"&gt;
+    &lt;i class="fas fa-chart-line"&gt;&lt;/i&gt;
+    &lt;h3&gt;进度管理&lt;/h3&gt;
+&lt;/div&gt;
+
+// 修复后  
+&lt;div class="module-card"&gt;
+    &lt;div class="module-icon progress"&gt;
+        &lt;i class="fas fa-chart-line"&gt;&lt;/i&gt;
+    &lt;/div&gt;
+    &lt;h3&gt;进度管理&lt;/h3&gt;
+&lt;/div&gt;</code></pre>
+        
+        <h3>问题2修复:</h3>
+        <ul>
+            <li>添加登录状态管理 (localStorage.isLoggedIn)</li>
+            <li>登录成功后保存状态并跳转</li>
+            <li>首页检查登录状态并更新导航栏</li>
+            <li>已登录用户访问登录页自动跳转</li>
+            <li>添加退出登录功能</li>
+        </ul>
+    </div>
+    
+    <div>
+        <h2>快速测试</h2>
+        <button class="test-btn" onclick="window.open('index.html', '_blank')">打开首页</button>
+        <button class="test-btn" onclick="window.open('login.html', '_blank')">打开登录页</button>
+        <button class="test-btn" onclick="clearAll()">清除所有状态</button>
+        <button class="test-btn" onclick="location.reload(true)">强制刷新页面</button>
+    </div>
+    
+    <script>
+        function verifyIssue1() {
+            // 检查index.html中是否包含正确的代码
+            fetch('index.html')
+                .then(response => response.text())
+                .then(html => {
+                    const hasCorrectCode = html.includes('<div class="module-icon progress">');
+                    const hasWrongCode = html.includes('<div class="module-card">\n    <i class="fas fa-chart-line"></i>');
+                    
+                    if (hasCorrectCode && !hasWrongCode) {
+                        document.getElementById('issue1-status').innerHTML = '<span style="color:green">✅ 已修复</span>';
+                        console.log('问题1: 已修复 - 找到正确的图标容器');
+                    } else if (hasWrongCode) {
+                        document.getElementById('issue1-status').innerHTML = '<span style="color:red">❌ 未修复 - 仍然使用错误的代码</span>';
+                        console.log('问题1: 未修复 - 仍然使用错误的代码');
+                    } else {
+                        document.getElementById('issue1-status').innerHTML = '<span style="color:orange">⚠️ 状态未知</span>';
+                        console.log('问题1: 状态未知');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('issue1-status').innerHTML = '<span style="color:red">❌ 检查失败</span>';
+                    console.error('检查失败:', error);
+                });
+        }
+        
+        function verifyIssue2() {
+            // 检查login.js中是否有正确的跳转逻辑
+            fetch('js/login.js')
+                .then(response => response.text())
+                .then(js => {
+                    const hasLoginLogic = js.includes('window.location.href = \'index.html\'');
+                    const hasPreventDefault = js.includes('e.preventDefault()');
+                    const hasLocalStorage = js.includes('localStorage.setItem(\'isLoggedIn\'');
+                    
+                    if (hasLoginLogic && hasPreventDefault && hasLocalStorage) {
+                        document.getElementById('issue2-status').innerHTML = '<span style="color:green">✅ 已修复</span>';
+                        console.log('问题2: 已修复 - 找到正确的登录逻辑');
+                    } else {
+                        document.getElementById('issue2-status').innerHTML = '<span style="color:red">❌ 未修复 - 缺少必要的代码</span>';
+                        console.log('问题2: 未修复 - 缺少必要的代码');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('issue2-status').innerHTML = '<span style="color:red">❌ 检查失败</span>';
+                    console.error('检查失败:', error);
+                });
+        }
+        
+        function viewSource() {
+            window.open('view-source:' + window.location.origin + window.location.pathname.replace('verify_fix.html', 'index.html'), '_blank');
+        }
+        
+        function testLogin() {
+            // 模拟登录测试
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('username', 'admin');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+        
+        function clearAll() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.getElementById('issue1-status').innerHTML = '待验证';
+            document.getElementById('issue2-status').innerHTML = '待验证';
+            console.log('所有状态已清除');
+            alert('所有状态已清除，请重新测试');
+        }
+        
+        // 页面加载时自动验证
+        window.onload = function() {
+            setTimeout(() => {
+                verifyIssue1();
+                verifyIssue2();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

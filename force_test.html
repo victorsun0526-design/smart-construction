@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强制测试</title>
+    <script>
+        // 强制清除所有相关状态
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // 添加时间戳避免缓存
+        const timestamp = new Date().getTime();
+        
+        // 重定向到登录页面，避免缓存
+        setTimeout(() => {
+            window.location.href = `login.html?t=${timestamp}`;
+        }, 100);
+    </script>
+</head>
+<body>
+    <h1>清除缓存并重定向...</h1>
+    <p>如果页面没有自动跳转，请 <a href="login.html">点击这里</a></p>
+</body>
+</html>

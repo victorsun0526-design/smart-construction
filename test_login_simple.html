@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单登录测试</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test-area { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        input { padding: 10px; margin: 5px; width: 200px; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>简单登录测试</h1>
+    
+    <div class="test-area">
+        <h3>测试1: 直接跳转测试</h3>
+        <button onclick="testRedirect1()">测试 window.location.href = 'index.html'</button>
+        <button onclick="testRedirect2()">测试 window.location.href = './index.html'</button>
+        <button onclick="testRedirect3()">测试 window.location.href = '/index.html'</button>
+    </div>
+    
+    <div class="test-area">
+        <h3>测试2: 模拟登录</h3>
+        <input type="text" id="testUser" placeholder="用户名" value="admin">
+        <input type="password" id="testPass" placeholder="密码" value="123456">
+        <button onclick="simulateLogin()">模拟登录并跳转</button>
+    </div>
+    
+    <div class="test-area">
+        <h3>测试3: 检查当前状态</h3>
+        <div id="status">状态: 未检查</div>
+        <button onclick="checkStatus()">检查状态</button>
+        <button onclick="clearStatus()">清除状态</button>
+    </div>
+    
+    <script>
+        function testRedirect1() {
+            console.log('测试1: window.location.href = "index.html"');
+            window.location.href = 'index.html';
+        }
+        
+        function testRedirect2() {
+            console.log('测试2: window.location.href = "./index.html"');
+            window.location.href = './index.html';
+        }
+        
+        function testRedirect3() {
+            console.log('测试3: window.location.href = "/index.html"');
+            window.location.href = '/index.html';
+        }
+        
+        function simulateLogin() {
+            const username = document.getElementById('testUser').value;
+            const password = document.getElementById('testPass').value;
+            
+            if (username === 'admin' && password === '123456') {
+                console.log('模拟登录成功');
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', username);
+                
+                // 测试不同的跳转方式
+                setTimeout(() => {
+                    console.log('跳转到 index.html');
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                alert('用户名或密码错误');
+            }
+        }
+        
+        function checkStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const username = localStorage.getItem('username') || '未登录';
+            document.getElementById('status').innerHTML = `
+                <p>登录状态: ${isLoggedIn ? '✅ 已登录' : '❌ 未登录'}</p>
+                <p>用户名: ${username}</p>
+            `;
+        }
+        
+        function clearStatus() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            checkStatus();
+        }
+        
+        // 初始检查
+        checkStatus();
+    </script>
+</body>
+</html>

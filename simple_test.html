@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>文件检查 - 简单版</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .file { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+        .exists { color: green; font-weight: bold; }
+        .missing { color: red; font-weight: bold; }
+        .btn { 
+            display: inline-block; 
+            padding: 10px 20px; 
+            background: #4CAF50; 
+            color: white; 
+            text-decoration: none; 
+            margin: 5px; 
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧工地平台 - 文件检查</h1>
+    
+    <h2>检查结果：</h2>
+    <div id="results">
+        <div class="file">正在检查文件...</div>
+    </div>
+    
+    <h2>快速链接：</h2>
+    <div>
+        <a href="index.html" class="btn" target="_blank">打开首页</a>
+        <a href="login.html" class="btn" target="_blank">打开登录页</a>
+        <a href="dashboard.html" class="btn" target="_blank">打开工作台</a>
+        <a href="RUN_ME.html" class="btn" target="_blank">打开部署页面</a>
+    </div>
+    
+    <h2>手动检查：</h2>
+    <p>如果上面的检查失败，请手动点击链接测试：</p>
+    <ol>
+        <li>点击"打开首页" - 应该能看到7个模块图标</li>
+        <li>点击"打开登录页" - 应该能看到登录表单</li>
+        <li>点击"打开工作台" - 应该能看到左侧菜单</li>
+    </ol>
+    
+    <h2>部署信息：</h2>
+    <p><strong>网站地址：</strong> https://smart-construction.vercel.app</p>
+    <p><strong>测试账号：</strong> admin / 123456</p>
+    
+    <script>
+        // 要检查的文件列表
+        const files = [
+            { name: 'index.html', path: 'index.html' },
+            { name: 'login.html', path: 'login.html' },
+            { name: 'dashboard.html', path: 'dashboard.html' },
+            { name: 'css/style.css', path: 'css/style.css' },
+            { name: 'js/main.js', path: 'js/main.js' },
+            { name: 'js/login.js', path: 'js/login.js' },
+            { name: 'js/dashboard.js', path: 'js/dashboard.js' }
+        ];
+        
+        function checkFile(file) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve({ ...file, exists: true });
+                img.onerror = () => {
+                    // 尝试用fetch
+                    fetch(file.path)
+                        .then(response => resolve({ ...file, exists: response.ok }))
+                        .catch(() => resolve({ ...file, exists: false }));
+                };
+                img.src = file.path + '?t=' + Date.now();
+            });
+        }
+        
+        async function checkAllFiles() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            
+            for (const file of files) {
+                const result = await checkFile(file);
+                const div = document.createElement('div');
+                div.className = 'file';
+                div.innerHTML = `
+                    ${result.exists ? '✅' : '❌'} 
+                    ${result.name} - 
+                    <span class="${result.exists ? 'exists' : 'missing'}">
+                        ${result.exists ? '文件存在' : '文件缺失'}
+                    </span>
+                `;
+                resultsDiv.appendChild(div);
+            }
+            
+            // 总结
+            const summary = document.createElement('div');
+            summary.className = 'file';
+            const existingFiles = files.filter(f => f.exists).length;
+            summary.innerHTML = `
+                <h3>检查完成：${existingFiles}/${files.length} 个文件存在</h3>
+                <p>${existingFiles === files.length ? '✅ 所有文件都准备好了！可以开始部署。' : '⚠️ 有些文件可能有问题，请检查。'}</p>
+            `;
+            resultsDiv.appendChild(summary);
+        }
+        
+        // 开始检查
+        checkAllFiles();
+    </script>
+</body>
+</html>
