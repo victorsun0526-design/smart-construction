@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>GitHub Pages修复指南</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .problem { background: #ffe6e6; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .solution { background: #e6ffe6; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .code { background: #f5f5f5; padding: 10px; border-radius: 3px; font-family: monospace; }
+        .step { margin: 15px 0; padding: 10px; border-left: 4px solid #3498db; }
+    </style>
+</head>
+<body>
+    <h1>🔧 GitHub Pages页面混乱问题修复</h1>
+    
+    <div class="problem">
+        <h2>❌ 问题原因：</h2>
+        <p>您的GitHub Pages地址是：<strong>https://victorsun0526-design.github.io/smart-construction/</strong></p>
+        <p>但是文件中的路径是相对路径，导致CSS、JS和页面跳转失败。</p>
+    </div>
+    
+    <div class="solution">
+        <h2>✅ 解决方案：</h2>
+        <p>需要修改文件中的路径，有两种方法：</p>
+        
+        <div class="step">
+            <h3>方法1：使用绝对路径（推荐）</h3>
+            <p>在所有HTML文件中，将相对路径改为绝对路径：</p>
+            <div class="code">
+                原路径：href="css/style.css"<br>
+                改为：href="/smart-construction/css/style.css"<br><br>
+                原路径：href="login.html"<br>
+                改为：href="/smart-construction/login.html"<br><br>
+                原路径：src="js/main.js"<br>
+                改为：src="/smart-construction/js/main.js"
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>方法2：使用base标签（最简单）</h3>
+            <p>在每个HTML文件的&lt;head&gt;部分添加：</p>
+            <div class="code">
+                &lt;base href="https://victorsun0526-design.github.io/smart-construction/"&gt;
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>方法3：修改GitHub Pages设置</h3>
+            <p>将仓库重命名为 <strong>victorsun0526-design.github.io</strong></p>
+            <p>这样网站地址会变成：<strong>https://victorsun0526-design.github.io</strong></p>
+            <p>相对路径就能正常工作了。</p>
+        </div>
+    </div>
+    
+    <div class="step">
+        <h2>🚀 立即修复步骤：</h2>
+        <ol>
+            <li><strong>打开GitHub仓库</strong></li>
+            <li><strong>编辑index.html文件</strong></li>
+            <li>在&lt;head&gt;标签内添加：</li>
+            <div class="code">
+                &lt;base href="https://victorsun0526-design.github.io/smart-construction/"&gt;
+            </div>
+            <li>同样修改login.html和dashboard.html</li>
+            <li>提交更改</li>
+            <li>等待1-2分钟重新部署</li>
+        </ol>
+    </div>
+    
+    <div class="step">
+        <h2>📝 需要修改的文件：</h2>
+        <ul>
+            <li><strong>index.html</strong> - 首页</li>
+            <li><strong>login.html</strong> - 登录页</li>
+            <li><strong>dashboard.html</strong> - 工作台</li>
+        </ul>
+        <p>每个文件都需要在&lt;head&gt;中添加base标签。</p>
+    </div>
+    
+    <div class="step">
+        <h2>🔍 检查当前问题：</h2>
+        <p>打开浏览器开发者工具（F12），查看：</p>
+        <ol>
+            <li><strong>Console标签</strong> - 查看JS错误</li>
+            <li><strong>Network标签</strong> - 查看哪些文件加载失败</li>
+            <li><strong>Sources标签</strong> - 查看文件路径</li>
+        </ol>
+    </div>
+    
+    <div class="solution">
+        <h2>🎯 最简单的修复：</h2>
+        <p>1. 在GitHub上编辑index.html</p>
+        <p>2. 在&lt;head&gt;标签内添加：</p>
+        <div class="code">
+            &lt;base href="https://victorsun0526-design.github.io/smart-construction/"&gt;
+        </div>
+        <p>3. 同样修改login.html和dashboard.html</p>
+        <p>4. 提交更改，等待部署</p>
+    </div>
+    
+    <div class="step">
+        <h2>📞 需要帮助？</h2>
+        <p>如果您需要我帮您修改文件，请告诉我：</p>
+        <ol>
+            <li>您希望使用哪种修复方法？</li>
+            <li>您能否在GitHub上编辑文件？</li>
+            <li>您希望我提供修改后的文件吗？</li>
+        </ol>
+    </div>
+    
+    <script>
+        // 显示当前网站信息
+        console.log("GitHub Pages修复指南");
+        console.log("您的网站：https://victorsun0526-design.github.io/smart-construction/");
+        console.log("问题：相对路径错误");
+        console.log("解决方案：添加base标签或使用绝对路径");
+    </script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 添加base标签修复GitHub Pages路径问题 -->
+    <base href="https://victorsun0526-design.github.io/smart-construction/">
+    <title>智慧工地管理平台 - 数字化施工解决方案</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="js/main.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-hard-hat"></i>
+                <span>智慧工地平台</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#home">首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#modules">功能模块</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#dashboard">数据看板</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">核心功能</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">联系我们</a></li>
+                    <li class="nav-item"><a class="btn btn-primary ms-2" href="login.html" id="nav-login-btn">登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 首页横幅 -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">智慧工地管理平台</h1>
+                    <p class="lead mb-4">数字化、智能化、可视化的施工管理解决方案，提升项目管理效率，保障施工安全与质量</p>
+                    <div class="d-flex gap-3">
+                        <a href="#modules" class="btn btn-primary btn-lg">查看功能模块</a>
+                        <a href="#contact" class="btn btn-outline-light btn-lg">免费试用</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="dashboard-preview">
+                        <div class="dashboard-grid">
+                            <div class="grid-item"><i class="fas fa-chart-line"></i><span>进度管理</span></div>
+                            <div class="grid-item"><i class="fas fa-shield-alt"></i><span>安全管理</span></div>
+                            <div class="grid-item"><i class="fas fa-check-circle"></i><span>质量管理</span></div>
+                            <div class="grid-item"><i class="fas fa-boxes"></i><span>材料管理</span></div>
+                            <div class="grid-item"><i class="fas fa-users"></i><span>人员管理</span></div>
+                            <div class="grid-item"><i class="fas fa-cogs"></i><span>设备管理</span></div>
+                            <div class="grid-item"><i class="fas fa-industry"></i><span>搅拌站管理</span></div>
+                            <div class="grid-item"><i class="fas fa-building"></i><span>预制场管理</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能模块 -->
+    <section id="modules" class="modules-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">八大核心管理模块</h2>
+            <div class="row g-4">
+                <!-- 进度管理 -->
+                <div class="col-md-3">
+                    <div class="module-card">
+                        <div class="module-icon progress">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>进度管理</h3>
+                        <p>工程进度计划、跟踪、预警，甘特图可视化</p>
+                        <a href="login.html" class="btn btn-outline-primary">进入模块</a>
+                    </div>
+                </div>
+                <!-- 安全管理 -->
+                <div class="col-md-3">
+                    <div class="module-card">
+                        <div class="module-icon safety">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>安全管理</h3>
+                        <p>安全隐患排查、安全检查、视频监控、PPE管理</p>
+                        <a href="login.html" class="btn btn-outline-primary">进入模块</a>
+                    </div>
+                </div>
+                <!-- 质量管理 -->
+                <div class="col-md-3">
+                    <div class="module-card">
+                        <div class="module-icon quality">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>质量管理</h3>
+                        <p>质量检查、验收管理、质量问题跟踪、质量月报</p>
+                        <a href="login.html" class="btn btn-outline-primary">进入模块</a>
+                    </div>
+                </div>
+                <!-- 材料管理 -->
+                <div class="col-md-3">
+                    <div class="module-card">
+                        <div class="module-icon material">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <h3>材料管理</h3>
+                        <p>材料采购、入库、领用、库存预警、供应商管理</p>
+                        <a href="login.html" class="btn btn-outline-primary">进入模块</a>
+                    </div>
+                </div>
+                <!-- 人员管理 -->
+                <div class="col-md-3">
+                    <div class="module-card">
+                        <div class="module-icon personnel">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>人员管理</h3>
+                        <p>人员档案、考勤管理、培训记录、工资结算</p>
+                        <a href="login.html" class="btn btn-outline-primary">进入模块</a>
+                    </div>
+                </div>
+                <!-- 设备管理 -->
+                <div class="col-md-3">
+                    <div class="module-card">
+                        <div class="module-icon equipment">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3>设备管理</h3>
+                        <p>设备台账、维护保养、运行监控、故障报警</p>
+                        <a href="login.html" class="btn btn-outline-primary">进入模块</a>
+                    </div>
+                </div>
+                <!-- 搅拌站管理 -->
+                <div class="col-md-3">
+                    <div class="module-card">
+                        <div class="module-icon batching">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <h3>搅拌站管理</h3>
+                        <p>混凝土配合比、生产订单、运输调度、质量检测</p>
+                        <a href="login.html" class="btn btn-outline-primary">进入模块</a>
+                    </div>
+                </div>
+                <!-- 预制场管理 -->
+                <div class="col-md-3">
+                    <div class="module-card">
+                        <div class="module-icon prefab">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3>预制场管理</h3>
+                        <p>预制构件生产、库存管理、运输安装、质量追溯</p>
+                        <a href="login.html" class="btn btn-outline-primary">进入模块</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>智慧工地管理平台</h5>
+                    <p>数字化施工管理解决方案</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p>© 2026 智慧工地平台. 保留所有权利.</p>
+                    <p>测试账号: admin / 123456</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

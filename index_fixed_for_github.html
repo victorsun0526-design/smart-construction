@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧工地管理平台 - GitHub Pages修复版</title>
+    
+    <!-- 使用内联样式避免CSS文件404 -->
+    <style>
+        /* 基础样式 */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --gray-color: #95a5a6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .navbar-brand i {
+            color: #3498db;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-primary {
+            background: #3498db;
+        }
+
+        .btn-outline-light {
+            background: transparent;
+            border: 2px solid white;
+        }
+
+        .btn-outline-light:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* 首页横幅 */
+        .hero-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 140px 0 80px;
+            margin-top: 60px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+
+        .col-lg-6 {
+            width: 50%;
+            padding: 0 15px;
+        }
+
+        .display-4 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .d-flex {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-lg {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+        }
+
+        /* 模块卡片 */
+        .modules-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-5 {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .section-subtitle {
+            color: #95a5a6;
+            font-size: 1.1rem;
+        }
+
+        .row.g-4 {
+            margin: -15px;
+        }
+
+        .col-md-6 {
+            width: 50%;
+            padding: 15px;
+        }
+
+        .col-lg-3 {
+            width: 25%;
+            padding: 15px;
+        }
+
+        @media (max-width: 992px) {
+            .col-lg-3 {
+                width: 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .col-md-6, .col-lg-3 {
+                width: 100%;
+            }
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: 1px solid #eee;
+            text-align: center;
+        }
+
+        .module-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .module-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin: 0 auto 20px;
+        }
+
+        .module-icon.progress { background: #3498db; }
+        .module-icon.safety { background: #e74c3c; }
+        .module-icon.quality { background: #27ae60; }
+        .module-icon.material { background: #f39c12; }
+        .module-icon.personnel { background: #9b59b6; }
+        .module-icon.equipment { background: #1abc9c; }
+        .module-icon.mixing { background: #d35400; }
+        .module-icon.prefab { background: #34495e; }
+
+        .module-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .module-card p {
+            color: #95a5a6;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .module-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .module-link:hover {
+            color: #2c3e50;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: #1a252f;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .footer-brand i {
+            color: #3498db;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* 警告框 */
+        .alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .text-start {
+            text-align: left;
+        }
+
+        .mt-5 {
+            margin-top: 3rem;
+        }
+
+        /* 调试信息 */
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 9999;
+        }
+    </style>
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="debug-info" id="debugInfo">
+        GitHub Pages修复版
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-hard-hat"></i>
+                <span>智慧工地平台</span>
+            </a>
+            <ul class="navbar-nav">
+                <li><a class="nav-link active" href="#home">首页</a></li>
+                <li><a class="nav-link" href="#modules">功能模块</a></li>
+                <li><a class="nav-link" href="#dashboard">数据看板</a></li>
+                <li><a class="nav-link" href="#features">核心功能</a></li>
+                <li><a class="nav-link" href="#contact">联系我们</a></li>
+                <li><a class="btn btn-primary" href="login.html">登录</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 首页横幅 -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h1 class="display-4">智慧工地管理平台</h1>
+                    <p class="lead">数字化、智能化、可视化的施工管理解决方案，提升项目管理效率，保障施工安全与质量</p>
+                    <div class="d-flex">
+                        <a href="#modules" class="btn btn-primary btn-lg">查看功能模块</a>
+                        <a href="#contact" class="btn btn-outline-light btn-lg">免费试用</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <!-- 简化的仪表板预览 -->
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                            <div style="background: #3498db; padding: 15px; border-radius: 8px; text-align: center;">进度管理</div>
+                            <div style="background: #e74c3c; padding: 15px; border-radius: 8px; text-align: center;">安全管理</div>
+                            <div style="background: #27ae60; padding: 15px; border-radius: 8px; text-align: center;">质量管理</div>
+                            <div style="background: #f39c12; padding: 15px; border-radius: 8px; text-align: center;">材料管理</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能模块 -->
+    <section id="modules" class="modules-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">八大核心管理模块</h2>
+                <p class="section-subtitle">全面覆盖工地管理的各个环节</p>
+            </div>
+            <div class="row g-4">
+                <!-- 进度管理 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="module-icon progress">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>进度管理</h3>
+                        <p>实时监控项目进度，自动生成甘特图，预警延期风险，优化施工计划</p>
+                        <a href="progress.html" class="module-link">查看详情 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- 安全管理 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="module-icon safety">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>安全管理</h3>
+                        <p>AI智能监控，风险预警，安全检查，事故报告，应急预案管理</p>
+                        <a href="safety.html" class="module-link">查看详情 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- 质量管理 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="module-icon quality">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3>质量管理</h3>
+                        <p>质量标准库，检验批管理，质量问题追踪，质量评估报告</p>
+                        <a href="quality.html" class="module-link">查看详情 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- 材料管理 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="module-icon material">
+                            <i class="fas fa-pallet"></i>
+                        </div>
+                        <h3>材料管理</h3>
+                        <p>材料采购、入库、出库、库存管理，供应商管理，材料追溯</p>
+                        <a href="material.html" class="module-link">查看详情 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- 人员管理 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="module-icon personnel">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>人员管理</h3>
+                        <p>人员档案，考勤管理，培训记录，资质证书，工资结算</p>
+                        <a href="personnel.html" class="module-link">查看详情 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- 机械设备管理 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="module-icon equipment">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h3>机械设备管理</h3>
+                        <p>设备台账，使用记录，维护保养，故障报修，能耗监控</p>
+                        <a href="equipment.html" class="module-link">查看详情 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- 拌合站管理 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="module-icon mixing">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <h3>拌合站管理</h3>
+                        <p>生产计划，配合比管理，生产监控，质量检测，运输调度</p>
+                        <a href="mixing.html" class="module-link">查看详情 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- 预制场管理 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="module-icon prefab">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3>预制场管理</h3>
+                        <p>预制构件生产，库存管理，质量检验，运输安装，进度跟踪</p>
+                        <a href="prefab.html" class="module-link">查看详情 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-5 text-center">
+                <div class="alert alert-info">
+                    <h4>GitHub Pages修复说明</h4>
+                    <p>此版本使用内联样式，避免CSS文件404错误。</p>
+                    <p>如需完整功能，请上传以下文件夹到GitHub：</p>
+                    <ol class="text-start" style="max-width: 500px; margin: 20px auto;">
+                        <li><code>css/</code> - 样式文件夹</li>
+                        <li><code>js/</code> - JavaScript文件夹</li>
+                        <li>所有HTML文件</li>
+                    </ol>
+                    <p>查看详细指南：<a href="GITHUB_PAGES_FIX.md">GITHUB_PAGES_FIX.md</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="footer-brand">
+                        <i class="fas fa-hard-hat"></i>
+                        <span>智慧工地平台</span>
+                    </div>
+                    <p>专业的数字化施工管理解决方案提供商</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="footer-links">
+                        <a href="#">关于我们</a>
+                        <a href="#">服务条款</a>
+                        <a href="#">隐私政策</a>
+                        <a href="#">帮助中心</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 智慧工地管理平台. 保留所有权利.</p>
+                <p>GitHub Pages修复版 - 内联样式确保显示</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 简单的JavaScript功能
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('GitHub Pages修复版加载完成');
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 更新调试信息
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.innerHTML = `
+                GitHub Pages修复版<br>
+                样式: 内联<br>
+                时间: ${new Date().toLocaleTimeString()}
+            `;
+        });
+    </script>
+</body>
+</html>
