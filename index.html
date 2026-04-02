@@ -3,59 +3,409 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智慧工地管理平台 - 数字化施工解决方案</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>智慧工地管理平台 - GitHub Pages修复版</title>
+    
+    <!-- 使用内联样式避免CSS文件404 -->
+    <style>
+        /* 基础样式 */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --gray-color: #95a5a6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .navbar-brand i {
+            color: #3498db;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-primary {
+            background: #3498db;
+        }
+
+        .btn-outline-light {
+            background: transparent;
+            border: 2px solid white;
+        }
+
+        .btn-outline-light:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* 首页横幅 */
+        .hero-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 140px 0 80px;
+            margin-top: 60px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+
+        .col-lg-6 {
+            width: 50%;
+            padding: 0 15px;
+        }
+
+        .display-4 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .d-flex {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-lg {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+        }
+
+        /* 模块卡片 */
+        .modules-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-5 {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .section-subtitle {
+            color: #95a5a6;
+            font-size: 1.1rem;
+        }
+
+        .row.g-4 {
+            margin: -15px;
+        }
+
+        .col-md-6 {
+            width: 50%;
+            padding: 15px;
+        }
+
+        .col-lg-3 {
+            width: 25%;
+            padding: 15px;
+        }
+
+        @media (max-width: 992px) {
+            .col-lg-3 {
+                width: 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .col-md-6, .col-lg-3 {
+                width: 100%;
+            }
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: 1px solid #eee;
+            text-align: center;
+        }
+
+        .module-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .module-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin: 0 auto 20px;
+        }
+
+        .module-icon.progress { background: #3498db; }
+        .module-icon.safety { background: #e74c3c; }
+        .module-icon.quality { background: #27ae60; }
+        .module-icon.material { background: #f39c12; }
+        .module-icon.personnel { background: #9b59b6; }
+        .module-icon.equipment { background: #1abc9c; }
+        .module-icon.mixing { background: #d35400; }
+        .module-icon.prefab { background: #34495e; }
+
+        .module-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .module-card p {
+            color: #95a5a6;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .module-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .module-link:hover {
+            color: #2c3e50;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: #1a252f;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .footer-brand i {
+            color: #3498db;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* 警告框 */
+        .alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .text-start {
+            text-align: left;
+        }
+
+        .mt-5 {
+            margin-top: 3rem;
+        }
+
+        /* 调试信息 */
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 9999;
+        }
+    </style>
+    
+    <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
+    <div class="debug-info" id="debugInfo">
+        GitHub Pages修复版
+    </div>
+
     <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <nav class="navbar">
         <div class="container">
             <a class="navbar-brand" href="#">
                 <i class="fas fa-hard-hat"></i>
                 <span>智慧工地平台</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#home">首页</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#modules">功能模块</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#dashboard">数据看板</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#features">核心功能</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">联系我们</a></li>
-                    <li class="nav-item"><a class="btn btn-primary ms-2" href="login.html" id="nav-login-btn">登录</a></li>
-                </ul>
-            </div>
+            <ul class="navbar-nav">
+                <li><a class="nav-link active" href="#home">首页</a></li>
+                <li><a class="nav-link" href="#modules">功能模块</a></li>
+                <li><a class="nav-link" href="#dashboard">数据看板</a></li>
+                <li><a class="nav-link" href="#features">核心功能</a></li>
+                <li><a class="nav-link" href="#contact">联系我们</a></li>
+                <li><a class="btn btn-primary" href="login.html">登录</a></li>
+            </ul>
         </div>
     </nav>
 
     <!-- 首页横幅 -->
     <section id="home" class="hero-section">
         <div class="container">
-            <div class="row align-items-center">
+            <div class="row">
                 <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4">智慧工地管理平台</h1>
-                    <p class="lead mb-4">数字化、智能化、可视化的施工管理解决方案，提升项目管理效率，保障施工安全与质量</p>
-                    <div class="d-flex gap-3">
+                    <h1 class="display-4">智慧工地管理平台</h1>
+                    <p class="lead">数字化、智能化、可视化的施工管理解决方案，提升项目管理效率，保障施工安全与质量</p>
+                    <div class="d-flex">
                         <a href="#modules" class="btn btn-primary btn-lg">查看功能模块</a>
                         <a href="#contact" class="btn btn-outline-light btn-lg">免费试用</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="dashboard-preview">
-                        <div class="dashboard-grid">
-                            <div class="grid-item progress">进度管理</div>
-                            <div class="grid-item safety">安全管理</div>
-                            <div class="grid-item quality">质量管理</div>
-                            <div class="grid-item material">材料管理</div>
-                            <div class="grid-item personnel">人员管理</div>
-                            <div class="grid-item equipment">设备管理</div>
-                            <div class="grid-item mixing">拌合站管理</div>
-                            <div class="grid-item prefab">预制场管理</div>
+                    <!-- 简化的仪表板预览 -->
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                            <div style="background: #3498db; padding: 15px; border-radius: 8px; text-align: center;">进度管理</div>
+                            <div style="background: #e74c3c; padding: 15px; border-radius: 8px; text-align: center;">安全管理</div>
+                            <div style="background: #27ae60; padding: 15px; border-radius: 8px; text-align: center;">质量管理</div>
+                            <div style="background: #f39c12; padding: 15px; border-radius: 8px; text-align: center;">材料管理</div>
                         </div>
                     </div>
                 </div>
@@ -64,7 +414,7 @@
     </section>
 
     <!-- 功能模块 -->
-    <section id="modules" class="modules-section py-5">
+    <section id="modules" class="modules-section">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="section-title">八大核心管理模块</h2>
@@ -160,251 +510,25 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- 数据看板 -->
-    <section id="dashboard" class="dashboard-section py-5 bg-light">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">实时数据看板</h2>
-                <p class="section-subtitle">可视化监控工地各项关键指标</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-8">
-                    <div class="dashboard-main">
-                        <div class="dashboard-header">
-                            <h3>项目总览</h3>
-                            <div class="time-filter">
-                                <select class="form-select">
-                                    <option>今日</option>
-                                    <option>本周</option>
-                                    <option>本月</option>
-                                    <option>本年</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="dashboard-content">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="metric-card">
-                                        <div class="metric-header">
-                                            <i class="fas fa-hard-hat"></i>
-                                            <span>在岗人员</span>
-                                        </div>
-                                        <div class="metric-value">248</div>
-                                        <div class="metric-change positive">+12</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="metric-card">
-                                        <div class="metric-header">
-                                            <i class="fas fa-truck"></i>
-                                            <span>运行设备</span>
-                                        </div>
-                                        <div class="metric-value">56</div>
-                                        <div class="metric-change negative">-3</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="metric-card">
-                                        <div class="metric-header">
-                                            <i class="fas fa-chart-line"></i>
-                                            <span>项目进度</span>
-                                        </div>
-                                        <div class="metric-value">78%</div>
-                                        <div class="metric-change positive">+2%</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="metric-card">
-                                        <div class="metric-header">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                            <span>安全隐患</span>
-                                        </div>
-                                        <div class="metric-value">3</div>
-                                        <div class="metric-change negative">+1</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="chart-container mt-4">
-                                <canvas id="progressChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="dashboard-sidebar">
-                        <h4>实时告警</h4>
-                        <div class="alert-list">
-                            <div class="alert-item warning">
-                                <i class="fas fa-exclamation-circle"></i>
-                                <div>
-                                    <strong>2号塔吊超载</strong>
-                                    <small>10分钟前 · 设备管理</small>
-                                </div>
-                            </div>
-                            <div class="alert-item info">
-                                <i class="fas fa-info-circle"></i>
-                                <div>
-                                    <strong>混凝土供应延迟</strong>
-                                    <small>25分钟前 · 拌合站</small>
-                                </div>
-                            </div>
-                            <div class="alert-item success">
-                                <i class="fas fa-check-circle"></i>
-                                <div>
-                                    <strong>安全检查完成</strong>
-                                    <small>1小时前 · 安全管理</small>
-                                </div>
-                            </div>
-                            <div class="alert-item danger">
-                                <i class="fas fa-times-circle"></i>
-                                <div>
-                                    <strong>人员未戴安全帽</strong>
-                                    <small>2小时前 · AI监控</small>
-                                </div>
-                            </div>
-                        </div>
-                        <h4 class="mt-4">今日任务</h4>
-                        <div class="task-list">
-                            <div class="task-item">
-                                <input type="checkbox" checked>
-                                <span>每日安全巡检</span>
-                            </div>
-                            <div class="task-item">
-                                <input type="checkbox" checked>
-                                <span>材料入库验收</span>
-                            </div>
-                            <div class="task-item">
-                                <input type="checkbox">
-                                <span>设备维护保养</span>
-                            </div>
-                            <div class="task-item">
-                                <input type="checkbox">
-                                <span>质量检查报告</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 核心功能 -->
-    <section id="features" class="features-section py-5">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">平台核心功能</h2>
-                <p class="section-subtitle">先进技术赋能工地管理</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3>AI智能监控</h3>
-                        <p>基于计算机视觉的智能监控系统，自动识别安全隐患、违规行为</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-mobile-alt"></i>
-                        </div>
-                        <h3>移动端应用</h3>
-                        <p>支持手机APP、微信小程序，随时随地查看工地情况，处理工作</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-cloud"></i>
-                        </div>
-                        <h3>云端部署</h3>
-                        <p>SaaS云服务模式，无需本地部署，数据安全备份，系统自动更新</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <h3>数据分析</h3>
-                        <p>大数据分析引擎，提供决策支持，预测风险，优化资源配置</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <h3>视频监控</h3>
-                        <p>高清视频监控系统，支持多画面查看，录像回放，异常报警</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-file-contract"></i>
-                        </div>
-                        <h3>电子文档</h3>
-                        <p>电子化文档管理，在线审批流程，版本控制，权限管理</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 联系我们 -->
-    <section id="contact" class="contact-section py-5 bg-dark text-white">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <h2 class="mb-4">联系我们</h2>
-                    <p class="mb-4">如果您对我们的智慧工地平台感兴趣，欢迎联系我们获取更多信息或申请免费试用。</p>
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <i class="fas fa-phone"></i>
-                            <span>400-123-4567</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>contact@smart-construction.com</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>北京市海淀区中关村科技园</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <form class="contact-form">
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="您的姓名" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="tel" class="form-control" placeholder="联系电话" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="电子邮箱" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="公司名称">
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" rows="4" placeholder="您的需求"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">提交申请</button>
-                    </form>
+            
+            <div class="mt-5 text-center">
+                <div class="alert alert-info">
+                    <h4>GitHub Pages修复说明</h4>
+                    <p>此版本使用内联样式，避免CSS文件404错误。</p>
+                    <p>如需完整功能，请上传以下文件夹到GitHub：</p>
+                    <ol class="text-start" style="max-width: 500px; margin: 20px auto;">
+                        <li><code>css/</code> - 样式文件夹</li>
+                        <li><code>js/</code> - JavaScript文件夹</li>
+                        <li>所有HTML文件</li>
+                    </ol>
+                    <p>查看详细指南：<a href="GITHUB_PAGES_FIX.md">GITHUB_PAGES_FIX.md</a></p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 页脚 -->
-    <footer class="footer py-4">
+    <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
@@ -412,7 +536,7 @@
                         <i class="fas fa-hard-hat"></i>
                         <span>智慧工地平台</span>
                     </div>
-                    <p class="mt-3">专业的数字化施工管理解决方案提供商</p>
+                    <p>专业的数字化施工管理解决方案提供商</p>
                 </div>
                 <div class="col-md-6">
                     <div class="footer-links">
@@ -421,45 +545,45 @@
                         <a href="#">隐私政策</a>
                         <a href="#">帮助中心</a>
                     </div>
-                    <div class="social-links mt-3">
-                        <a href="#"><i class="fab fa-weixin"></i></a>
-                        <a href="#"><i class="fab fa-weibo"></i></a>
-                        <a href="#"><i class="fab fa-qq"></i></a>
-                        <a href="#"><i class="fab fa-github"></i></a>
-                    </div>
                 </div>
             </div>
-            <div class="footer-bottom mt-4 pt-4 border-top text-center">
+            <div class="footer-bottom">
                 <p>&copy; 2026 智慧工地管理平台. 保留所有权利.</p>
+                <p>GitHub Pages修复版 - 内联样式确保显示</p>
             </div>
         </div>
     </footer>
 
-    <!-- 脚本 -->
     <script>
-        // 添加调试信息
-        console.log('index.html 加载完成');
-        console.log('当前路径:', window.location.pathname);
-        console.log('LocalStorage状态:', {
-            isLoggedIn: localStorage.getItem('isLoggedIn'),
-            username: localStorage.getItem('username')
-        });
-        
-        // 页面加载时检查登录状态
+        // 简单的JavaScript功能
         document.addEventListener('DOMContentLoaded', function() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            const loginBtn = document.getElementById('nav-login-btn');
+            console.log('GitHub Pages修复版加载完成');
             
-            if (isLoggedIn && loginBtn) {
-                const username = localStorage.getItem('username') || '用户';
-                loginBtn.innerHTML = `<i class="fas fa-user"></i> ${username}`;
-                loginBtn.href = 'dashboard.html';
-                loginBtn.classList.add('logged-in');
-            }
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 更新调试信息
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.innerHTML = `
+                GitHub Pages修复版<br>
+                样式: 内联<br>
+                时间: ${new Date().toLocaleTimeString()}
+            `;
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/main.js"></script>
 </body>
 </html>
