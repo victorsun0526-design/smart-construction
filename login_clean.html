@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 智慧工地平台</title>
+    
+    <!-- 内联样式 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .login-left {
+            flex: 1;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .login-brand i {
+            font-size: 2.5rem;
+            color: #3498db;
+        }
+
+        .login-brand h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .login-features {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .login-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .login-features i {
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+
+        .login-right {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .form-check-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #2980b9;
+        }
+
+        .login-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #999;
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .login-divider span {
+            padding: 0 15px;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .social-btn:hover {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .social-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+            
+            .login-left {
+                padding: 30px;
+            }
+            
+            .login-right {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-brand h1 {
+                font-size: 1.5rem;
+            }
+            
+            .login-title {
+                font-size: 1.5rem;
+            }
+            
+            .social-login {
+                flex-direction: column;
+            }
+        }
+    </style>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <!-- 左侧品牌介绍 -->
+        <div class="login-left">
+            <div class="login-brand">
+                <i class="fas fa-hard-hat"></i>
+                <h1>智慧工地平台</h1>
+            </div>
+            
+            <h2 style="font-size: 1.8rem; margin-bottom: 20px;">数字化施工管理解决方案</h2>
+            <p style="line-height: 1.6; margin-bottom: 30px;">
+                基于云计算、大数据和人工智能技术，为施工企业提供全方位的数字化管理平台，
+                提升项目管理效率，保障施工安全与质量。
+            </p>
+            
+            <ul class="login-features">
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>八大核心管理模块</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>实时数据监控看板</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>移动端多终端支持</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>智能预警与报告</span>
+                </li>
+            </ul>
+            
+            <div style="margin-top: 40px; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                <p>还没有账号？ <a href="#contact" style="color: #3498db; text-decoration: none;">立即申请试用</a></p>
+            </div>
+        </div>
+        
+        <!-- 右侧登录表单 -->
+        <div class="login-right">
+            <div class="login-form">
+                <h2 class="login-title">用户登录</h2>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="username">用户名</label>
+                        <input type="text" id="username" class="form-control" placeholder="请输入用户名" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="password">密码</label>
+                        <input type="password" id="password" class="form-control" placeholder="请输入密码" required>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input type="checkbox" id="remember" class="form-check-input">
+                        <label class="form-check-label" for="remember">记住登录状态</label>
+                    </div>
+                    
+                    <button type="submit" class="btn-login">登录</button>
+                </form>
+                
+                <div class="login-links">
+                    <a href="#" class="login-link">忘记密码？</a>
+                    <span style="color: #999; margin: 0 10px;">|</span>
+                    <a href="index.html" class="login-link">返回首页</a>
+                </div>
+                
+                <div class="login-divider">
+                    <span>或使用其他方式登录</span>
+                </div>
+                
+                <div class="social-login">
+                    <button class="social-btn">
+                        <i class="fab fa-weixin"></i>
+                        微信登录
+                    </button>
+                    <button class="social-btn">
+                        <i class="fab fa-qq"></i>
+                        QQ登录
+                    </button>
+                </div>
+                
+                <div style="margin-top: 30px; text-align: center; font-size: 0.9rem; color: #999;">
+                    <p>登录即表示您同意我们的 <a href="#" style="color: #3498db;">服务条款</a> 和 <a href="#" style="color: #3498db;">隐私政策</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 登录表单处理
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            // 简单的验证
+            if (!username || !password) {
+                alert('请输入用户名和密码');
+                return;
+            }
+            
+            // 模拟登录成功
+            alert('登录成功！正在跳转到工作台...');
+            
+            // 跳转到完整的工作台演示页面
+            window.location.href = 'dashboard_final.html';
+            
+            // 重置表单
+            this.reset();
+        });
+
+        // 社交登录按钮
+        document.querySelectorAll('.social-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const platform = this.textContent.trim();
+                alert(`即将跳转到${platform}授权页面`);
+            });
+        });
+
+        // 返回首页
+        document.querySelector('a[href="index.html"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
