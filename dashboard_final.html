@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作台 - 智慧工地平台</title>
+    <style>
+        :root { --primary: #2c3e50; --secondary: #3498db; --success: #27ae60; --warning: #f39c12; --danger: #e74c3c; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #333; }
+        
+        .topbar {
+            position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--primary); color: white;
+            display: flex; align-items: center; padding: 0 20px; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .topbar-brand { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: 600; color: white; text-decoration: none; }
+        .sidebar-toggle { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; margin-right: 15px; }
+        
+        .sidebar {
+            position: fixed; top: 60px; left: 0; width: 260px; height: calc(100vh - 60px);
+            background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 999;
+            overflow-y: auto; transition: transform 0.3s;
+        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #eee; }
+        .sidebar-menu { padding: 15px 0; }
+        
+        .menu-group { margin-bottom: 5px; }
+        .menu-header {
+            display: flex; align-items: center; gap: 10px; padding: 12px 20px;
+            cursor: pointer; color: #555; font-weight: 500; transition: background 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .menu-header:hover { background: #f5f7fa; color: var(--primary); }
+        .menu-header.active { background: #e8f4fc; color: var(--secondary); border-left-color: var(--secondary); }
+        .toggle-icon { margin-left: auto; transition: transform 0.3s; font-size: 0.8rem; }
+        .menu-header.active .toggle-icon { transform: rotate(180deg); }
+        
+        .menu-items { display: none; background: #f9f9f9; }
+        .menu-items.active { display: block; }
+        .menu-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 20px 10px 50px;
+            color: #666; text-decoration: none; cursor: pointer; transition: background 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .menu-item:hover { background: #f0f0f0; color: var(--primary); }
+        .menu-item.active { background: #e8f4fc; color: var(--secondary); border-left-color: var(--secondary); }
+        
+        .main-content {
+            margin-left: 260px; margin-top: 60px; padding: 20px;
+            min-height: calc(100vh - 60px); transition: margin-left 0.3s;
+        }
+        .sidebar-collapsed .sidebar { transform: translateX(-100%); }
+        .sidebar-collapsed .main-content { margin-left: 0; }
+        
+        .module-content { display: none; }
+        .module-content.active { display: block; }
+        
+        .module-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #eee;
+        }
+        .module-title { display: flex; align-items: center; gap: 10px; color: var(--primary); font-size: 1.5rem; }
+        
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 5px; font-size: 0.9rem;
+            font-weight: 500; cursor: pointer; display: inline-flex; align-items: center;
+            gap: 8px; transition: all 0.3s;
+        }
+        .btn-primary { background: var(--secondary); color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-light { background: #f8f9fa; color: #495057; border: 1px solid #dee2e6; }
+        .btn-light:hover { background: #e9ecef; }
+        
+        .card {
+            background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px; margin-bottom: 20px;
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .card-title { margin: 0; color: var(--primary); }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card {
+            background: white; border-radius: 10px; padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px;
+        }
+        .stat-icon {
+            width: 50px; height: 50px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: white;
+        }
+        .stat-content { flex: 1; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
+        .stat-label { font-size: 0.9rem; color: #95a5a6; }
+        .stat-change { font-size: 0.8rem; margin-top: 5px; }
+        .stat-change.positive { color: var(--success); }
+        .stat-change.negative { color: var(--danger); }
+        
+        .table-container { overflow-x: auto; margin-bottom: 20px; }
+        .table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        .table th, .table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        .table th { background: #f8f9fa; font-weight: 600; color: var(--primary); }
+        .table tr:hover { background: #f8f9fa; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 500; color: #555; }
+        .form-control {
+            width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 5px;
+            font-size: 0.95rem; transition: border-color 0.3s;
+        }
+        .form-control:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+        
+        .form-check { display: flex; align-items: center; margin-bottom: 10px; }
+        .form-check-input { margin-right: 10px; }
+        .form-check-label { margin: 0; }
+        
+        .badge {
+            display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500;
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        
+        .progress { height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; margin: 10px 0; }
+        .progress-bar { height: 100%; background: var(--secondary); border-radius: 5px; transition: width 0.3s; }
+        
+        @media (max-width: 768px) {
+            .sidebar { width: 220px; }
+            .main-content { margin-left: 220px; padding: 15px; }
+            .sidebar-collapsed .main-content { margin-left: 0; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="topbar">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="index.html" class="topbar-brand">
+            <i class="fas fa-hard-hat"></i>
+            <span>智慧工地平台</span>
+        </a>
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--secondary); display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span>管理员</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-tachometer-alt"></i><span>工作台</span></h3>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu"></div>
+    </div>
+    
+    <div class="main-content">
+        <div id="moduleContent">
+            <div class="module-content active">
+                <div class="module-header">
+                    <h1 class="module-title"><i class="fas fa-tachometer-alt"></i><span>智慧工地工作台</span></h1>
+                    <div>
+                        <button class="btn btn-primary" onclick="showNotification('欢迎！')"><i class="fas fa-bell"></i> 提醒</button>
+                        <button class="btn" onclick="exportReport()"><i class="fas fa-download"></i> 导出</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon" style="background: var(--secondary);"><i class="fas fa-chart-line"></i></div><div class="stat-content"><div class="stat-value">8</div><div class="stat-label">管理模块</div></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: var(--success);"><i class="fas fa-check-circle"></i></div><div class="stat-content"><div class="stat-value">156</div><div class="stat-label">完成项目</div></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: var(--warning);"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-content"><div class="stat-value">23</div><div class="stat-label">待处理</div></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: #17a2b8;"><i class="fas fa-users"></i></div><div class="stat-content"><div class="stat-value">342</div><div class="stat-label">在线人员</div></div></div>
+                </div>
+                <div class="card"><h3>平台概览</h3><p>欢迎使用智慧工地管理平台！请从左侧菜单中选择要管理的模块。</p></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 核心JavaScript ==========
+        
+        // 1. 菜单数据
+        var menuData = [
+            { id: 'progress', name: '进度管理', icon: 'fa-chart-line', submenus: [
+                { id: 'overview', name: '工程进度', icon: 'fa-tachometer-alt' },
+                { id: 'report', name: '进度填报', icon: 'fa-file-upload' }
+            ]},
+            { id: 'safety', name: '安全管理', icon: 'fa-shield-alt', submenus: [
+                { id: 'hazard', name: '安全隐患', icon: 'fa-exclamation-triangle' },
+                { id: 'inspection', name: '安全巡检', icon: 'fa-clipboard-check' },
+                { id: 'monitor', name: '视频监控', icon: 'fa-video' },
+                { id: 'ppe', name: 'PPE申请', icon: 'fa-hard-hat' }
+            ]},
+            { id: 'quality', name: '质量管理', icon: 'fa-award', submenus: [
+                { id: 'issue', name: '质量隐患', icon: 'fa-exclamation-circle' },
+                { id: 'check', name: '质量巡检', icon: 'fa-check-double' },
+                { id: 'summary', name: '质量月总结', icon: 'fa-chart-bar' }
+            ]},
+            { id: 'material', name: '材料管理', icon: 'fa-boxes', submenus: [
+                { id: 'purchase', name: '材料请购', icon: 'fa-shopping-cart' },
+                { id: 'receive', name: '材料领用', icon: 'fa-hand-holding' },
+                { id: 'inventory', name: '库存管理', icon: 'fa-warehouse' }
+            ]},
+            { id: 'personnel', name: '人员管理', icon: 'fa-users', submenus: [
+                { id: 'roster', name: '花名册', icon: 'fa-address-book' },
+                { id: 'attendance', name: '人员考勤', icon: 'fa-calendar-check' }
+            ]},
+            { id: 'equipment', name: '设备管理', icon: 'fa-cogs', submenus: [
+                { id: 'tower', name: '塔机监测', icon: 'fa-crane' },
+                { id: 'bridge', name: '架桥机监测', icon: 'fa-bridge' },
+                { id: 'elevator', name: '升降机监测', icon: 'fa-elevator' }
+            ]},
+            { id: 'mixing', name: '拌合站管理', icon: 'fa-industry', submenus: [
+                { id: 'concrete', name: '混凝土浇筑令', icon: 'fa-truck-mix' },
+                { id: 'workorder', name: '工单确认', icon: 'fa-clipboard-list' }
+            ]},
+            { id: 'prefab', name: '预制场管理', icon: 'fa-building', submenus: [
+                { id: 'production', name: '生产管理', icon: 'fa-industry' },
+                { id: 'stock', name: '库存管理', icon: 'fa-boxes-stacked' },
+                { id: 'inspection', name: '质量检验', icon: 'fa-check-circle' }
+            ]}
+        ];
+
+        // 2. 初始化菜单
+        function initMenu() {
+            var container = document.getElementById('sidebarMenu');
+            if (!container) {
+                console.error('找不到菜单容器');
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            for (var i = 0; i < menuData.length; i++) {
+                var menu = menuData[i];
+                
+                var group = document.createElement('div');
+                group.className = 'menu-group';
+                group.id = 'menu-' + menu.id;
+                
+                var header = document.createElement('div');
+                header.className = 'menu-header';
+                header.innerHTML = '<i class="fas ' + menu.icon + '"></i><span>' + menu.name + '</span><i class="fas fa-chevron-down toggle-icon"></i>';
+                header.onclick = (function(menuId) {
+                    return function() {
+                        toggleMenu(menuId);
+                    };
+                })(menu.id);
+                
+                var items = document.createElement('div');
+                items.className = 'menu-items';
+                items.id = 'submenu-' + menu.id;
+                
+                for (var j = 0; j < menu.submenus.length; j++) {
+                    var sub = menu.submenus[j];
+                    
+                    var item = document.createElement('a');
+                    item.className = 'menu-item';
+                    item.href = 'javascript:void(0)';
+                    item.id = 'item-' + menu.id + '-' + sub.id;
+                    item.innerHTML = '<i class="fas ' + sub.icon + '"></i><span>' + sub.name + '</span>';
+                    item.onclick = (function(menuId, subId) {
+                        return function(e) {
+                            if (e) e.stopPropagation();
+                            activateMenuItem(menuId, subId);
+                        };
+                    })(menu.id, sub.id);
+                    
+                    items.appendChild(item);
+                }
+                
+                group.appendChild(header);
+                group.appendChild(items);
+                container.appendChild(group);
+            }
+            
+            console.log('菜单初始化完成，共' + menuData.length + '个主菜单');
+        }
+
+        // 3. 切换菜单
+        function toggleMenu(menuId) {
+            var header = document.querySelector('#menu-' + menuId + ' .menu-header');
+            var items = document.querySelector('#submenu-' + menuId);
+            if (!header || !items) return;
+            
+            header.classList.toggle('active');
+            items.classList.toggle('active');
+            
+            var icon = header.querySelector('.toggle-icon');
+            if (icon) {
+                icon.style.transform = header.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        // 4. 激活菜单项
+        function activateMenuItem(menuId, submenuId) {
+            // 移除所有active
+            var allHeaders = document.querySelectorAll('.menu-header');
+            for (var i = 0; i < allHeaders.length; i++) {
+                allHeaders[i].classList.remove('active');
+            }
+            
+            var allItems = document.querySelectorAll('.menu-item');
+            for (var i = 0; i < allItems.length; i++) {
+                allItems[i].classList.remove('active');
+            }
+            
+            // 激活当前
+            var header = document.querySelector('#menu-' + menuId + ' .menu-header');
+            var item = document.querySelector('#item-' + menuId + '-' + submenuId);
+            var items = document.querySelector('#submenu-' + menuId);
+            
+            if (header && item && items) {
+                header.classList.add('active');
+                item.classList.add('active');
+                items.classList.add('active');
+                
+                var icon = header.querySelector('.toggle-icon');
+                if (icon) {
+                    icon.style.transform = 'rotate(180deg)';
+                }
+                
+                loadModuleContent(menuId, submenuId);
+            }
+        }
+
+        // 5. 加载模块内容
+        function loadModuleContent(menuId, submenuId) {
+            var key = menuId + '-' + submenuId;
+            var container = document.getElementById('moduleContent');
+            if (!container) return;
+            
+            var title = '';
+            var content = '';
+            
+            if (key === 'progress-overview') {
+                title = '工程进度总览';
+                content = generateEnhancedProgressOverview();
+            } else if (key === 'progress-report') {
+                title = '进度填报';
+                content = generateEnhancedProgressReport();
+            } else if (key === 'safety-hazard') {
+                title = '安全隐患管理';
+                content = generateSafetyHazardContent();
+            } else {
+                title = menuId + ' - ' + submenuId;
+                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-cogs"></i><span>' + title + '</span></h1></div><div class="card"><h3>功能开发中</h3><p>该功能页面正在开发中。</p></div>';
+            }
+            
+            container.innerHTML = '<div class="module-content active">' + content + '</div>';
+            document.title = title + ' - 智慧工地平台';
+        }
+
+        // 6. 工具函数
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-collapsed');
+        }
+
+        function showNotification(msg) {
+            alert(msg);
+        }
+
+        function exportReport() {
+            showNotification('导出功能开发中');
+        }
+
+        // 7. 页面初始化
+        function initializePage() {
+            console.log('智慧工地平台 - 增强版加载');
+            
+            // 初始化菜单
+            initMenu();
+            
+            // 默认激活第一个菜单
+            setTimeout(function() {
+                if (menuData && menuData.length > 0) {
+                    var firstMenu = menuData[0];
+                    if (firstMenu.submenus && firstMenu.submenus.length > 0) {
+                        activateMenuItem(firstMenu.id, firstMenu.submenus[0].id);
+                    }
+                }
+            }, 100);
+            
+            console.log('页面初始化完成');
+        }
+
+        // 8. 确保页面加载后执行
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            // DOM已经加载完成
+            initializePage();
+        }
+        
+        // 9. 全局导出（用于调试）
+        window.menuData = menuData;
+        window.initMenu = initMenu;
+        window.toggleMenu = toggleMenu;
+        window.activateMenuItem = activateMenuItem;
+        window.loadModuleContent = loadModuleContent;
+        window.toggleSidebar = toggleSidebar;
+        
+        // ========== 增强功能函数 ==========
+        
+        // 10. 生成增强的工程进度总览
+        function generateEnhancedProgressOverview() {
+            return `
+                <div class="module-header">
+                    <h1 class="module-title"><i class="fas fa-chart-line"></i><span>工程进度总览 - 专业版</span></h1>
+                    <div>
+                        <button class="btn btn-primary" onclick="showNotification('刷新数据')"><i class="fas fa-sync-alt"></i> 刷新</button>
+                        <button class="btn" onclick="exportReport()"><i class="fas fa-download"></i> 导出报表</button>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--secondary);">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">86%</div>
+                            <div class="stat-label">总体进度</div>
+                            <div class="stat-change positive">+2% 本周</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--success);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">已完成任务</div>
+                            <div class="stat-change positive">+3 今日</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--warning);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">进行中任务</div>
+                            <div class="stat-change negative">-2 今日</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--danger);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">延期任务</div>
+                            <div class="stat-change">需紧急处理</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">月度进度分析</h3>
+                        <div>
+                            <button class="btn btn-light btn-sm">本月</button>
+                            <button class="btn btn-light btn-sm">上月</button>
+                            <button class="btn btn-light btn-sm">季度</button>
+                        </div>
+                    </div>
+                    <div style="padding: 20px; text-align: center; background: #f8f9fa; border-radius: 8px; margin: 15px 0;">
+                        <p><i class="fas fa-chart-bar" style="color: var(--secondary); font-size: 2rem; margin-bottom: 10px;"></i></p>
+                        <p><strong>进度可视化图表区域</strong></p>
+                        <p style="color: #666; font-size: 0.9rem;">实际项目中可集成ECharts等图表库</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">关键任务跟踪</h3>
+                        <button class="btn btn-primary btn-sm" onclick="showNotification('添加新任务')"><i class="fas fa-plus"></i> 添加任务</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>任务名称</th>
+                                    <th>负责人</th>
+                                    <th>开始时间</th>
+                                    <th>截止时间</th>
+                                    <th>进度</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>主体结构施工</td>
+                                    <td>张工</td>
+                                    <td>2026-03-01</td>
+                                    <td>2026-05-15</td>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar" style="width: 78%"></div>
+                                        </div>
+                                        <span style="font-size: 0.8rem;">78%</span>
+                                    </td>
+                                    <td><span class="badge badge-success">正常</span></td>
+                                </tr>
+                                <tr>
+                                    <td>外墙装饰</td>
+                                    <td>李工</td>
+                                    <td>2026-03-20</td>
+                                    <td>2026-04-30</td>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar" style="width: 92%"></div>
+                                        </div>
+                                        <span style="font-size: 0.8rem;">92%</span>
+                                    </td>
+                                    <td><span class="badge badge-success">正常</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">进度填报统计</h3>
+                        <button class="btn btn-light btn-sm" onclick="showProgressHistory()"><i class="fas fa-history"></i> 查看历史</button>
+                    </div>
+                    <div style="padding: 15px;">
+                        <p>今日已提交进度填报：<strong>8</strong> 条记录</p>
+                        <p>本周累计填报：<strong>42</strong> 条记录</p>
+                        <p>本月累计填报：<strong>156</strong> 条记录</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="activateMenuItem('progress', 'report')"><i class="fas fa-plus"></i> 立即填报进度</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 11. 生成增强的进度填报表单
+        function generateEnhancedProgressReport() {
+            return `
+                <div class="module-header">
+                    <h1 class="module-title"><i class="fas fa-file-upload"></i><span>进度填报 - 智能表单</span></h1>
+                    <div>
+                        <button class="btn btn-light" onclick="showProgressHistory()"><i class="fas fa-history"></i> 历史记录</button>
+                        <button class="btn btn-primary" onclick="showNotification('保存成功')"><i class="fas fa-save"></i> 保存草稿</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">新建进度填报</h3>
+                        <span class="badge badge-success">在线</span>
+                    </div>
+                    <div style="padding: 20px;">
+                        <form id="progressForm" onsubmit="submitEnhancedProgressForm(event)">
+                            <div class="form-group">
+                                <label class="form-label">填报日期</label>
+                                <input type="date" class="form-control" value="${new Date().toISOString().split('T')[0]}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">施工部位</label>
+                                <select class="form-control" required>
+                                    <option value="">请选择施工部位</option>
+                                    <option value="主体结构">主体结构</option>
+                                    <option value="外墙装饰">外墙装饰</option>
+                                    <option value="水电安装">水电安装</option>
+                                    <option value="消防系统">消防系统</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">工作内容</label>
+                                <textarea class="form-control" rows="3" placeholder="请输入具体工作内容..." required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">完成进度 (%)</label>
+                                <input type="range" class="form-control" min="0" max="100" value="50" oninput="document.getElementById('progressValue').textContent = this.value + '%'">
+                                <div style="text-align: center; margin-top: 5px;">
+                                    <span id="progressValue" style="font-weight: bold;">50%</span>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 25px; text-align: center;">
+                                <button type="submit" class="btn btn-primary" style="padding: 10px 30px;">
+                                    <i class="fas fa-paper-plane"></i> 提交填报
+                                </button>
+                                <button type="button" class="btn btn-light" onclick="showNotification('表单已重置')" style="margin-left: 15px;">
+                                    <i class="fas fa-redo"></i> 重置
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 12. 生成安全隐患管理内容
+        function generateSafetyHazardContent() {
+            return `
+                <div class="module-header">
+                    <h1 class="module-title"><i class="fas fa-exclamation-triangle"></i><span>安全隐患管理</span></h1>
+                    <div>
+                        <button class="btn btn-primary" onclick="showNotification('新建隐患')"><i class="fas fa-plus"></i> 新建隐患</button>
+                        <button class="btn btn-light" onclick="showNotification('导出隐患清单')"><i class="fas fa-download"></i> 导出</button>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--danger);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">待处理隐患</div>
+                            <div class="stat-change negative">+2 今日新增</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--warning);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">处理中隐患</div>
+                            <div class="stat-change">-1 今日完成</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">紧急隐患列表</h3>
+                        <span class="badge badge-danger">高优先级</span>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>隐患编号</th>
+                                    <th>隐患描述</th>
+                                    <th>发现时间</th>
+                                    <th>发现人</th>
+                                    <th>整改期限</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>SAF-2026-042</td>
+                                    <td>3层临边防护缺失</td>
+                                    <td>2026-04-02</td>
+                                    <td>安全员-张三</td>
+                                    <td>2026-04-03</td>
+                                    <td><span class="badge badge-danger">紧急</span></td>
+                                </tr>
+                                <tr>
+                                    <td>SAF-2026-043</td>
+                                    <td>塔吊限位器失效</td>
+                                    <td>2026-04-02</td>
+                                    <td>设备员-李四</td>
+                                    <td>2026-04-03</td>
+                                    <td><span class="badge badge-danger">紧急</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 13. 提交增强进度表单
+        function submitEnhancedProgressForm(event) {
+            event.preventDefault();
+            showNotification('进度填报已提交！数据已保存到本地存储。');
+            
+            // 模拟保存数据到本地存储
+            var formData = {
+                date: new Date().toISOString().split('T')[0],
+                timestamp: new Date().toISOString(),
+                status: '已提交'
+            };
+            
+            // 保存到本地存储
+            saveProgressData(formData);
+            
+            // 3秒后跳转到进度总览
+            setTimeout(function() {
+                activateMenuItem('progress', 'overview');
+            }, 3000);
+        }
+
+        // 14. 显示进度历史
+        function showProgressHistory() {
+            var historyData = loadProgressData();
+            var count = historyData ? historyData.length : 0;
+            
+            alert('您有 ' + count + ' 条历史填报记录。\\n\\n实际项目中可在此显示详细的历史记录列表。');
+        }
+
+        // 15. 加载进度数据
+        function loadProgressData() {
+            try {
+                var data = localStorage.getItem('progressData');
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                console.error('加载数据失败:', e);
+                return [];
+            }
+        }
+
+        // 16. 保存进度数据
+        function saveProgressData(formData) {
+            try {
+                var history = loadProgressData();
+                history.push(formData);
+                
+                // 只保留最近100条记录
+                if (history.length > 100) {
+                    history = history.slice(-100);
+                }
+                
+                localStorage.setItem('progressData', JSON.stringify(history));
+                console.log('数据保存成功，当前记录数:', history.length);
+            } catch (e) {
+                console.error('保存数据失败:', e);
+            }
+        }
+
+        // 17. 全局导出增强函数
+        window.generateEnhancedProgressOverview = generateEnhancedProgressOverview;
+        window.generateEnhancedProgressReport = generateEnhancedProgressReport;
+        window.generateSafetyHazardContent = generateSafetyHazardContent;
+        window.submitEnhancedProgressForm = submitEnhancedProgressForm;
+        window.showProgressHistory = showProgressHistory;
+        window.loadProgressData = loadProgressData;
+        window.saveProgressData = saveProgressData;
+        // ========== 所有子菜单增强功能函数 ==========
+
+// 1. 安全巡检管理
+function generateSafetyInspectionContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-clipboard-check"></i><span>安全巡检管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日巡检计划</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>巡检区域</th>
+                            <th>负责人</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>主体结构</td>
+                            <td>安全员-张三</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                        <tr>
+                            <td>塔吊区域</td>
+                            <td>设备员-李四</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 2. 视频监控管理
+function generateSafetyMonitorContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-video"></i><span>视频监控管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">实时报警记录</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>摄像头</th>
+                            <th>报警类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>08:45</td>
+                            <td>CAM-003</td>
+                            <td>区域入侵</td>
+                        </tr>
+                        <tr>
+                            <td>10:20</td>
+                            <td>CAM-012</td>
+                            <td>未戴安全帽</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 3. PPE申请管理
+function generateSafetyPPEContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-hard-hat"></i><span>PPE申请管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">紧急申请列表</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>申请编号</th>
+                            <th>申请人</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PPE-2026-087</td>
+                            <td>张工（钢筋班）</td>
+                            <td><span class="badge badge-warning">待审批</span></td>
+                        </tr>
+                        <tr>
+                            <td>PPE-2026-088</td>
+                            <td>李工（电焊班）</td>
+                            <td><span class="badge badge-warning">待审批</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 4. 质量隐患管理
+function generateQualityIssueContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-exclamation-circle"></i><span>质量隐患管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">严重质量隐患列表</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>隐患编号</th>
+                            <th>隐患描述</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>QUAL-2026-056</td>
+                            <td>混凝土强度不足</td>
+                            <td><span class="badge badge-danger">紧急</span></td>
+                        </tr>
+                        <tr>
+                            <td>QUAL-2026-057</td>
+                            <td>钢筋间距超标</td>
+                            <td><span class="badge badge-warning">处理中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 5. 质量巡检管理
+function generateQualityCheckContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-search"></i><span>质量巡检管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日巡检任务</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>巡检项目</th>
+                            <th>负责人</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>混凝土浇筑</td>
+                            <td>质量员-王工</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                        <tr>
+                            <td>钢筋绑扎</td>
+                            <td>质量员-李工</td>
+                            <td><span class="badge badge-warning">进行中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 6. 质量月总结
+function generateQualitySummaryContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-chart-bar"></i><span>质量月总结</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">本月质量数据</h3>
+            </div>
+            <div style="padding: 20px;">
+                <p><strong>总体情况：</strong>本月质量管理工作稳步提升</p>
+                <p><strong>主要成绩：</strong></p>
+                <ul>
+                    <li>混凝土强度合格率：98.2%</li>
+                    <li>钢筋工程合格率：96.8%</li>
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
+// 7. 材料请购管理
+function generateMaterialPurchaseContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-shopping-cart"></i><span>材料请购管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">紧急请购列表</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>请购编号</th>
+                            <th>材料名称</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MAT-2026-045</td>
+                            <td>钢筋 Φ25</td>
+                            <td><span class="badge badge-warning">待审批</span></td>
+                        </tr>
+                        <tr>
+                            <td>MAT-2026-046</td>
+                            <td>水泥 P.O 42.5</td>
+                            <td><span class="badge badge-success">已批准</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 8. 材料领用管理
+function generateMaterialReceiveContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-box-open"></i><span>材料领用管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日领用记录</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>领用单号</th>
+                            <th>领用班组</th>
+                            <th>材料名称</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>REC-2026-089</td>
+                            <td>钢筋班</td>
+                            <td>钢筋 Φ25</td>
+                        </tr>
+                        <tr>
+                            <td>REC-2026-090</td>
+                            <td>模板班</td>
+                            <td>模板 18mm</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 9. 库存管理
+function generateMaterialInventoryContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-warehouse"></i><span>库存管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">库存预警列表</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>材料名称</th>
+                            <th>当前库存</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>水泥 P.O 42.5</td>
+                            <td>45吨</td>
+                            <td><span class="badge badge-warning">预警</span></td>
+                        </tr>
+                        <tr>
+                            <td>砂子 中砂</td>
+                            <td>120吨</td>
+                            <td><span class="badge badge-warning">预警</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 10. 人员花名册
+function generatePersonnelRosterContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-users"></i><span>人员花名册</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">班组人员统计</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>班组</th>
+                            <th>人数</th>
+                            <th>在岗</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>钢筋班</td>
+                            <td>56</td>
+                            <td>54</td>
+                        </tr>
+                        <tr>
+                            <td>模板班</td>
+                            <td>48</td>
+                            <td>46</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 11. 人员考勤管理
+function generatePersonnelAttendanceContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-calendar-check"></i><span>人员考勤管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日考勤异常</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>班组</th>
+                            <th>异常类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>张三</td>
+                            <td>钢筋班</td>
+                            <td>迟到</td>
+                        </tr>
+                        <tr>
+                            <td>李四</td>
+                            <td>模板班</td>
+                            <td>早退</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 12. 塔机监测
+function generateEquipmentTowerContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-crane"></i><span>塔机监测</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">塔机运行状态</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>塔机编号</th>
+                            <th>位置</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>T01</td>
+                            <td>1#楼北侧</td>
+                            <td><span class="badge badge-success">正常</span></td>
+                        </tr>
+                        <tr>
+                            <td>T02</td>
+                            <td>2#楼东侧</td>
+                            <td><span class="badge badge-warning">预警</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 13. 架桥机监测
+function generateEquipmentBridgeContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-bridge"></i><span>架桥机监测</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">架桥机运行参数</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>设备编号</th>
+                            <th>跨度</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>B01</td>
+                            <td>40m</td>
+                            <td><span class="badge badge-success">正常</span></td>
+                        </tr>
+                        <tr>
+                            <td>B02</td>
+                            <td>35m</td>
+                            <td><span class="badge badge-success">正常</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 14. 升降机监测
+function generateEquipmentElevatorContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-elevator"></i><span>升降机监测</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">升降机运行状态</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>设备编号</th>
+                            <th>位置</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>E01</td>
+                            <td>1#楼</td>
+                            <td><span class="badge badge-success">正常</span></td>
+                        </tr>
+                        <tr>
+                            <td>E02</td>
+                            <td>2#楼</td>
+                            <td><span class="badge badge-warning">预警</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 15. 混凝土浇筑令
+function generateMixingConcreteContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-truck-mix"></i><span>混凝土浇筑令</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日浇筑计划</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>浇筑令号</th>
+                            <th>浇筑部位</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CON-2026-078</td>
+                            <td>3层柱</td>
+                            <td><span class="badge badge-success">进行中</span></td>
+                        </tr>
+                        <tr>
+                            <td>CON-2026-079</td>
+                            <td>4层梁板</td>
+                            <td><span class="badge badge-warning">待开始</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 16. 工单确认
+function generateMixingWorkorderContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-clipboard-list"></i><span>工单确认</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日工单</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>工单号</th>
+                            <th>工作内容</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>WO-2026-045</td>
+                            <td>混凝土浇筑</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                        <tr>
+                            <td>WO-2026-046</td>
+                            <td>钢筋绑扎</td>
+                            <td><span class="badge badge-warning">进行中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 17. 生产管理
+function generatePrefabProductionContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-industry"></i><span>生产管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日生产计划</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>产品名称</th>
+                            <th>计划数量</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>预制梁</td>
+                            <td>12根</td>
+                            <td><span class="badge badge-success">进行中</span></td>
+                        </tr>
+                        <tr>
+                            <td>预制板</td>
+                            <td>24块</td>
+                            <td><span class="badge badge-warning">待开始</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 18. 库存管理
+function generatePrefabStockContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-warehouse"></i><span>库存管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">预制件库存</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>产品名称</th>
+                            <th>库存数量</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>预制梁</td>
+                            <td>56根</td>
+                            <td><span class="badge badge-success">充足</span></td>
+                        </tr>
+                        <tr>
+                            <td>预制板</td>
+                            <td>128块</td>
+                            <td><span class="badge badge-success">充足</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 19. 质量检验
+function generatePrefabInspectionContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-search"></i><span>质量检验</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日检验任务</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>检验项目</th>
+                            <th>检验员</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>预制梁强度</td>
+                            <td>质检员-王工</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                        <tr>
+                            <td>预制板尺寸</td>
+                            <td>质检员-李工</td>
+                            <td><span class="badge badge-warning">进行中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 20. 全局导出所有增强函数
+window.generateSafetyInspectionContent = generateSafetyInspectionContent;
+window.generateSafetyMonitorContent = generateSafetyMonitorContent;
+window.generateSafetyPPEContent = generateSafetyPPEContent;
+window.generateQualityIssueContent = generateQualityIssueContent;
+window.generateQualityCheckContent = generateQualityCheckContent;
+window.generateQualitySummaryContent = generateQualitySummaryContent;
+window.generateMaterialPurchaseContent = generateMaterialPurchaseContent;
+window.generateMaterialReceiveContent = generateMaterialReceiveContent;
+window.generateMaterialInventoryContent = generateMaterialInventoryContent;
+window.generatePersonnelRosterContent = generatePersonnelRosterContent;
+window.generatePersonnelAttendanceContent = generatePersonnelAttendanceContent;
+window.generateEquipmentTowerContent = generateEquipmentTowerContent;
+window.generateEquipmentBridgeContent = generateEquipmentBridgeContent;
+window.generateEquipmentElevatorContent = generateEquipmentElevatorContent;
+window.generateMixingConcreteContent = generateMixingConcreteContent;
+window.generateMixingWorkorderContent = generateMixingWorkorderContent;
+window.generatePrefabProductionContent = generatePrefabProductionContent;
+window.generatePrefabStockContent = generatePrefabStockContent;
+window.generatePrefabInspectionContent = generatePrefabInspectionContent;
+
+console.log('✅ 所有增强功能函数已加载完成！');
+        console.log('JavaScript加载完成 - 增强版');
+    </script>
+</body>
+</html>
