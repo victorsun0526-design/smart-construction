@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作台 - 智慧工地平台</title>
+    <style>
+        :root { --primary: #2c3e50; --secondary: #3498db; --success: #27ae60; --warning: #f39c12; --danger: #e74c3c; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #333; }
+        
+        .topbar {
+            position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--primary); color: white;
+            display: flex; align-items: center; padding: 0 20px; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .topbar-brand { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: 600; color: white; text-decoration: none; }
+        .sidebar-toggle { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; margin-right: 15px; }
+        
+        .sidebar {
+            position: fixed; top: 60px; left: 0; width: 260px; height: calc(100vh - 60px);
+            background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 999;
+            overflow-y: auto; transition: transform 0.3s;
+        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #eee; }
+        .sidebar-menu { padding: 15px 0; }
+        
+        .menu-group { margin-bottom: 5px; }
+        .menu-header {
+            display: flex; align-items: center; gap: 10px; padding: 12px 20px;
+            cursor: pointer; color: #555; font-weight: 500; transition: background 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .menu-header:hover { background: #f5f7fa; color: var(--primary); }
+        .menu-header.active { background: #e8f4fc; color: var(--secondary); border-left-color: var(--secondary); }
+        .toggle-icon { margin-left: auto; transition: transform 0.3s; font-size: 0.8rem; }
+        .menu-header.active .toggle-icon { transform: rotate(180deg); }
+        
+        .menu-items { display: none; background: #f9f9f9; }
+        .menu-items.active { display: block; }
+        .menu-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 20px 10px 50px;
+            color: #666; text-decoration: none; cursor: pointer; transition: background 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .menu-item:hover { background: #f0f0f0; color: var(--primary); }
+        .menu-item.active { background: #e8f4fc; color: var(--secondary); border-left-color: var(--secondary); }
+        
+        .main-content {
+            margin-left: 260px; margin-top: 60px; padding: 20px;
+            min-height: calc(100vh - 60px); transition: margin-left 0.3s;
+        }
+        .sidebar-collapsed .sidebar { transform: translateX(-100%); }
+        .sidebar-collapsed .main-content { margin-left: 0; }
+        
+        .module-content { display: none; }
+        .module-content.active { display: block; }
+        
+        .module-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #eee;
+        }
+        .module-title { display: flex; align-items: center; gap: 10px; color: var(--primary); font-size: 1.5rem; }
+        
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 5px; font-size: 0.9rem;
+            font-weight: 500; cursor: pointer; display: inline-flex; align-items: center;
+            gap: 8px; transition: all 0.3s;
+        }
+        .btn-primary { background: var(--secondary); color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        
+        .card {
+            background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px; margin-bottom: 20px;
+        }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card {
+            background: white; border-radius: 10px; padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px;
+        }
+        .stat-icon {
+            width: 50px; height: 50px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: white;
+        }
+        .stat-content { flex: 1; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
+        .stat-label { font-size: 0.9rem; color: #95a5a6; }
+        
+        @media (max-width: 768px) {
+            .sidebar { width: 220px; }
+            .main-content { margin-left: 220px; padding: 15px; }
+            .sidebar-collapsed .main-content { margin-left: 0; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="topbar">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="index.html" class="topbar-brand">
+            <i class="fas fa-hard-hat"></i>
+            <span>智慧工地平台</span>
+        </a>
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--secondary); display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span>管理员</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-tachometer-alt"></i><span>工作台</span></h3>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <!-- 菜单将通过JavaScript动态生成 -->
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div id="moduleContent">
+            <div class="module-content active">
+                <div class="module-header">
+                    <h1 class="module-title"><i class="fas fa-tachometer-alt"></i><span>智慧工地工作台</span></h1>
+                    <div>
+                        <button class="btn btn-primary" onclick="showNotification('欢迎！')"><i class="fas fa-bell"></i> 提醒</button>
+                        <button class="btn" onclick="exportReport()"><i class="fas fa-download"></i> 导出</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon" style="background: var(--secondary);"><i class="fas fa-chart-line"></i></div><div class="stat-content"><div class="stat-value">8</div><div class="stat-label">管理模块</div></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: var(--success);"><i class="fas fa-check-circle"></i></div><div class="stat-content"><div class="stat-value">156</div><div class="stat-label">完成项目</div></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: var(--warning);"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-content"><div class="stat-value">23</div><div class="stat-label">待处理</div></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: #17a2b8;"><i class="fas fa-users"></i></div><div class="stat-content"><div class="stat-value">342</div><div class="stat-label">在线人员</div></div></div>
+                </div>
+                <div class="card"><h3>平台概览</h3><p>欢迎使用智慧工地管理平台！请从左侧菜单中选择要管理的模块。</p></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 紧急修复版本 ==========
+        // 简化JavaScript，确保无语法错误
+        
+        // 1. 菜单数据
+        var menuData = [
+            {
+                id: 'progress',
+                name: '进度管理',
+                icon: 'fa-chart-line',
+                submenus: [
+                    { id: 'overview', name: '工程进度', icon: 'fa-tachometer-alt' },
+                    { id: 'report', name: '进度填报', icon: 'fa-file-upload' }
+                ]
+            },
+            {
+                id: 'safety',
+                name: '安全管理',
+                icon: 'fa-shield-alt',
+                submenus: [
+                    { id: 'hazard', name: '安全隐患', icon: 'fa-exclamation-triangle' },
+                    { id: 'inspection', name: '安全巡检', icon: 'fa-clipboard-check' },
+                    { id: 'monitor', name: '视频监控', icon: 'fa-video' },
+                    { id: 'ppe', name: 'PPE申请', icon: 'fa-hard-hat' }
+                ]
+            },
+            {
+                id: 'quality',
+                name: '质量管理',
+                icon: 'fa-award',
+                submenus: [
+                    { id: 'issue', name: '质量隐患', icon: 'fa-exclamation-circle' },
+                    { id: 'check', name: '质量巡检', icon: 'fa-check-double' },
+                    { id: 'summary', name: '质量月总结', icon: 'fa-chart-bar' }
+                ]
+            },
+            {
+                id: 'material',
+                name: '材料管理',
+                icon: 'fa-boxes',
+                submenus: [
+                    { id: 'purchase', name: '材料请购', icon: 'fa-shopping-cart' },
+                    { id: 'receive', name: '材料领用', icon: 'fa-hand-holding' },
+                    { id: 'inventory', name: '库存管理', icon: 'fa-warehouse' }
+                ]
+            },
+            {
+                id: 'personnel',
+                name: '人员管理',
+                icon: 'fa-users',
+                submenus: [
+                    { id: 'roster', name: '花名册', icon: 'fa-address-book' },
+                    { id: 'attendance', name: '人员考勤', icon: 'fa-calendar-check' }
+                ]
+            },
+            {
+                id: 'equipment',
+                name: '设备管理',
+                icon: 'fa-cogs',
+                submenus: [
+                    { id: 'tower', name: '塔机监测', icon: 'fa-crane' },
+                    { id: 'bridge', name: '架桥机监测', icon: 'fa-bridge' },
+                    { id: 'elevator', name: '升降机监测', icon: 'fa-elevator' }
+                ]
+            },
+            {
+                id: 'mixing',
+                name: '拌合站管理',
+                icon: 'fa-industry',
+                submenus: [
+                    { id: 'concrete', name: '混凝土浇筑令', icon: 'fa-truck-mix' },
+                    { id: 'workorder', name: '工单确认', icon: 'fa-clipboard-list' }
+                ]
+            },
+            {
+                id: 'prefab',
+                name: '预制场管理',
+                icon: 'fa-building',
+                submenus: [
+                    { id: 'production', name: '生产管理', icon: 'fa-industry' },
+                    { id: 'stock', name: '库存管理', icon: 'fa-boxes-stacked' },
+                    { id: 'inspection', name: '质量检验', icon: 'fa-check-circle' }
+                ]
+            }
+        ];
+
+        // 2. 初始化菜单
+        function initMenu() {
+            var container = document.getElementById('sidebarMenu');
+            if (!container) {
+                console.error('找不到菜单容器');
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            for (var i = 0; i < menuData.length; i++) {
+                var menu = menuData[i];
+                
+                var group = document.createElement('div');
+                group.className = 'menu-group';
+                group.id = 'menu-' + menu.id;
+                
+                var header = document.createElement('div');
+                header.className = 'menu-header';
+                header.innerHTML = '<i class="fas ' + menu.icon + '"></i><span>' + menu.name + '</span><i class="fas fa-chevron-down toggle-icon"></i>';
+                header.onclick = (function(menuId) {
+                    return function() {
+                        toggleMenu(menuId);
+                    };
+                })(menu.id);
+                
+                var items = document.createElement('div');
+                items.className = 'menu-items';
+                items.id = 'submenu-' + menu.id;
+                
+                for (var j = 0; j < menu.submenus.length; j++) {
+                    var sub = menu.submenus[j];
+                    
+                    var item = document.createElement('a');
+                    item.className = 'menu-item';
+                    item.href = 'javascript:void(0)';
+                    item.id = 'item-' + menu.id + '-' + sub.id;
+                    item.innerHTML = '<i class="fas ' + sub.icon + '"></i><span>' + sub.name + '</span>';
+                    item.onclick = (function(menuId, subId) {
+                        return function(e) {
+                            if (e) e.stopPropagation();
+                            activateMenuItem(menuId, subId);
+                        };
+                    })(menu.id, sub.id);
+                    
+                    items.appendChild(item);
+                }
+                
+                group.appendChild(header);
+                group.appendChild(items);
+                container.appendChild(group);
+            }
+            
+            console.log('菜单初始化完成，共' + menuData.length + '个主菜单');
+        }
+
+        // 3. 切换菜单
+        function toggleMenu(menuId) {
+            var header = document.querySelector('#menu-' + menuId + ' .menu-header');
+            var items = document.querySelector('#submenu-' + menuId);
+            if (!header || !items) return;
+            
+            header.classList.toggle('active');
+            items.classList.toggle('active');
+            
+            var icon = header.querySelector('.toggle-icon');
+            if (icon) {
+                icon.style.transform = header.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        // 4. 激活菜单项
+        function activateMenuItem(menuId, submenuId) {
+            // 移除所有active
+            var allHeaders = document.querySelectorAll('.menu-header');
+            for (var i = 0; i < allHeaders.length; i++) {
+                allHeaders[i].classList.remove('active');
+            }
+            
+            var allItems = document.querySelectorAll('.menu-item');
+            for (var i = 0; i < allItems.length; i++) {
+                allItems[i].classList.remove('active');
+            }
+            
+            // 激活当前
+            var header = document.querySelector('#menu-' + menuId + ' .menu-header');
+            var item = document.querySelector('#item-' + menuId + '-' + submenuId);
+            var items = document.querySelector('#submenu-' + menuId);
+            
+            if (header && item && items) {
+                header.classList.add('active');
+                item.classList.add('active');
+                items.classList.add('active');
+                
+                var icon = header.querySelector('.toggle-icon');
+                if (icon) {
+                    icon.style.transform = 'rotate(180deg)';
+                }
+                
+                loadModuleContent(menuId, submenuId);
+            }
+        }
+
+        // 5. 加载模块内容
+        function loadModuleContent(menuId, submenuId) {
+            var key = menuId + '-' + submenuId;
+            var container = document.getElementById('moduleContent');
+            if (!container) return;
+            
+            var title = '';
+            var content = '';
+            
+            if (key === 'progress-overview') {
+                title = '工程进度总览';
+                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-chart-line"></i><span>' + title + '</span></h1></div>' +
+                         '<div class="stats-grid">' +
+                         '<div class="stat-card"><div class="stat-icon" style="background: var(--success);"><i class="fas fa-check-circle"></i></div><div class="stat-content"><div class="stat-value">78%</div><div class="stat-label">总体进度</div></div></div>' +
+                         '<div class="stat-card"><div class="stat-icon" style="background: var(--warning);"><i class="fas fa-clock"></i></div><div class="stat-content"><div class="stat-value">12</div><div class="stat-label">延期任务</div></div></div>' +
+                         '</div>' +
+                         '<div class="card"><h3>关键路径分析</h3><p>显示工程进度分析内容。</p></div>';
+            } else if (key === 'progress-report') {
+                title = '进度填报';
+                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-file-upload"></i><span>' + title + '</span></h1></div>' +
+                         '<div class="card"><h3>进度填报表单</h3><p>显示进度填报表单。</p></div>';
+            } else if (key === 'safety-hazard') {
+                title = '安全隐患管理';
+                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-exclamation-triangle"></i><span>' + title + '</span></h1></div>' +
+                         '<div class="card"><h3>隐患整改跟踪</h3><p>显示安全隐患管理内容。</p></div>';
+            } else {
+                title = menuId + ' - ' + submenuId;
+                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-cogs"></i><span>' + title + '</span></h1></div>' +
+                         '<div class="card"><h3>功能开发中</h3><p>该功能页面正在开发中。</p></div>';
+            }
+            
+            container.innerHTML = '<div class="module-content active">' + content + '</div>';
+            document.title = title + ' - 智慧工地平台';
+        }
+
+        // 6. 工具函数
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-collapsed');
+        }
+
+        function showNotification(msg) {
+            alert(msg);
+        }
+
+        function exportReport() {
+            showNotification('导出功能开发中');
+        }
+
+        // 7. 页面初始化
+        function initializePage() {
+            console.log('智慧工地平台 - 紧急修复版加载');
+            
+            // 初始化菜单
+            initMenu();
+            
+            // 默认激活第一个菜单
+            setTimeout(function() {
+                if (menuData && menuData.length > 0) {
+                    var firstMenu = menuData[0];
+                    if (firstMenu.submenus && firstMenu.submenus.length > 0) {
+                        activateMenuItem(firstMenu.id, firstMenu.submenus[0].id);
+                    }
+                }
+            }, 100);
+            
+            console.log('页面初始化完成');
+        }
+
+        // 8. 确保页面加载后执行
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            // DOM已经加载完成
+            initializePage();
+        }
+        
+        // 9. 全局导出（用于调试）
+        window.menuData = menuData;
+        window.initMenu = initMenu;
+        window.toggleMenu = toggleMenu;
+        window.activateMenuItem = activateMenuItem;
+        window.loadModuleContent = loadModuleContent;
+        window.toggleSidebar = toggleSidebar;
+        
+        console.log('JavaScript加载完成');
+    </script>
+</body>
+</html>
