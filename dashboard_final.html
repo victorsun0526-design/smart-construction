@@ -743,7 +743,718 @@
         window.showProgressHistory = showProgressHistory;
         window.loadProgressData = loadProgressData;
         window.saveProgressData = saveProgressData;
-        
+        // ========== 所有子菜单增强功能函数 ==========
+
+// 1. 安全巡检管理
+function generateSafetyInspectionContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-clipboard-check"></i><span>安全巡检管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日巡检计划</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>巡检区域</th>
+                            <th>负责人</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>主体结构</td>
+                            <td>安全员-张三</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                        <tr>
+                            <td>塔吊区域</td>
+                            <td>设备员-李四</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 2. 视频监控管理
+function generateSafetyMonitorContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-video"></i><span>视频监控管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">实时报警记录</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>摄像头</th>
+                            <th>报警类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>08:45</td>
+                            <td>CAM-003</td>
+                            <td>区域入侵</td>
+                        </tr>
+                        <tr>
+                            <td>10:20</td>
+                            <td>CAM-012</td>
+                            <td>未戴安全帽</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 3. PPE申请管理
+function generateSafetyPPEContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-hard-hat"></i><span>PPE申请管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">紧急申请列表</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>申请编号</th>
+                            <th>申请人</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PPE-2026-087</td>
+                            <td>张工（钢筋班）</td>
+                            <td><span class="badge badge-warning">待审批</span></td>
+                        </tr>
+                        <tr>
+                            <td>PPE-2026-088</td>
+                            <td>李工（电焊班）</td>
+                            <td><span class="badge badge-warning">待审批</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 4. 质量隐患管理
+function generateQualityIssueContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-exclamation-circle"></i><span>质量隐患管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">严重质量隐患列表</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>隐患编号</th>
+                            <th>隐患描述</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>QUAL-2026-056</td>
+                            <td>混凝土强度不足</td>
+                            <td><span class="badge badge-danger">紧急</span></td>
+                        </tr>
+                        <tr>
+                            <td>QUAL-2026-057</td>
+                            <td>钢筋间距超标</td>
+                            <td><span class="badge badge-warning">处理中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 5. 质量巡检管理
+function generateQualityCheckContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-search"></i><span>质量巡检管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日巡检任务</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>巡检项目</th>
+                            <th>负责人</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>混凝土浇筑</td>
+                            <td>质量员-王工</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                        <tr>
+                            <td>钢筋绑扎</td>
+                            <td>质量员-李工</td>
+                            <td><span class="badge badge-warning">进行中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 6. 质量月总结
+function generateQualitySummaryContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-chart-bar"></i><span>质量月总结</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">本月质量数据</h3>
+            </div>
+            <div style="padding: 20px;">
+                <p><strong>总体情况：</strong>本月质量管理工作稳步提升</p>
+                <p><strong>主要成绩：</strong></p>
+                <ul>
+                    <li>混凝土强度合格率：98.2%</li>
+                    <li>钢筋工程合格率：96.8%</li>
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
+// 7. 材料请购管理
+function generateMaterialPurchaseContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-shopping-cart"></i><span>材料请购管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">紧急请购列表</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>请购编号</th>
+                            <th>材料名称</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MAT-2026-045</td>
+                            <td>钢筋 Φ25</td>
+                            <td><span class="badge badge-warning">待审批</span></td>
+                        </tr>
+                        <tr>
+                            <td>MAT-2026-046</td>
+                            <td>水泥 P.O 42.5</td>
+                            <td><span class="badge badge-success">已批准</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 8. 材料领用管理
+function generateMaterialReceiveContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-box-open"></i><span>材料领用管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日领用记录</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>领用单号</th>
+                            <th>领用班组</th>
+                            <th>材料名称</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>REC-2026-089</td>
+                            <td>钢筋班</td>
+                            <td>钢筋 Φ25</td>
+                        </tr>
+                        <tr>
+                            <td>REC-2026-090</td>
+                            <td>模板班</td>
+                            <td>模板 18mm</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 9. 库存管理
+function generateMaterialInventoryContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-warehouse"></i><span>库存管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">库存预警列表</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>材料名称</th>
+                            <th>当前库存</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>水泥 P.O 42.5</td>
+                            <td>45吨</td>
+                            <td><span class="badge badge-warning">预警</span></td>
+                        </tr>
+                        <tr>
+                            <td>砂子 中砂</td>
+                            <td>120吨</td>
+                            <td><span class="badge badge-warning">预警</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 10. 人员花名册
+function generatePersonnelRosterContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-users"></i><span>人员花名册</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">班组人员统计</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>班组</th>
+                            <th>人数</th>
+                            <th>在岗</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>钢筋班</td>
+                            <td>56</td>
+                            <td>54</td>
+                        </tr>
+                        <tr>
+                            <td>模板班</td>
+                            <td>48</td>
+                            <td>46</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 11. 人员考勤管理
+function generatePersonnelAttendanceContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-calendar-check"></i><span>人员考勤管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日考勤异常</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>班组</th>
+                            <th>异常类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>张三</td>
+                            <td>钢筋班</td>
+                            <td>迟到</td>
+                        </tr>
+                        <tr>
+                            <td>李四</td>
+                            <td>模板班</td>
+                            <td>早退</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 12. 塔机监测
+function generateEquipmentTowerContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-crane"></i><span>塔机监测</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">塔机运行状态</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>塔机编号</th>
+                            <th>位置</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>T01</td>
+                            <td>1#楼北侧</td>
+                            <td><span class="badge badge-success">正常</span></td>
+                        </tr>
+                        <tr>
+                            <td>T02</td>
+                            <td>2#楼东侧</td>
+                            <td><span class="badge badge-warning">预警</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 13. 架桥机监测
+function generateEquipmentBridgeContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-bridge"></i><span>架桥机监测</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">架桥机运行参数</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>设备编号</th>
+                            <th>跨度</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>B01</td>
+                            <td>40m</td>
+                            <td><span class="badge badge-success">正常</span></td>
+                        </tr>
+                        <tr>
+                            <td>B02</td>
+                            <td>35m</td>
+                            <td><span class="badge badge-success">正常</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 14. 升降机监测
+function generateEquipmentElevatorContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-elevator"></i><span>升降机监测</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">升降机运行状态</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>设备编号</th>
+                            <th>位置</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>E01</td>
+                            <td>1#楼</td>
+                            <td><span class="badge badge-success">正常</span></td>
+                        </tr>
+                        <tr>
+                            <td>E02</td>
+                            <td>2#楼</td>
+                            <td><span class="badge badge-warning">预警</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 15. 混凝土浇筑令
+function generateMixingConcreteContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-truck-mix"></i><span>混凝土浇筑令</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日浇筑计划</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>浇筑令号</th>
+                            <th>浇筑部位</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CON-2026-078</td>
+                            <td>3层柱</td>
+                            <td><span class="badge badge-success">进行中</span></td>
+                        </tr>
+                        <tr>
+                            <td>CON-2026-079</td>
+                            <td>4层梁板</td>
+                            <td><span class="badge badge-warning">待开始</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 16. 工单确认
+function generateMixingWorkorderContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-clipboard-list"></i><span>工单确认</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日工单</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>工单号</th>
+                            <th>工作内容</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>WO-2026-045</td>
+                            <td>混凝土浇筑</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                        <tr>
+                            <td>WO-2026-046</td>
+                            <td>钢筋绑扎</td>
+                            <td><span class="badge badge-warning">进行中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 17. 生产管理
+function generatePrefabProductionContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-industry"></i><span>生产管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日生产计划</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>产品名称</th>
+                            <th>计划数量</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>预制梁</td>
+                            <td>12根</td>
+                            <td><span class="badge badge-success">进行中</span></td>
+                        </tr>
+                        <tr>
+                            <td>预制板</td>
+                            <td>24块</td>
+                            <td><span class="badge badge-warning">待开始</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 18. 库存管理
+function generatePrefabStockContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-warehouse"></i><span>库存管理</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">预制件库存</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>产品名称</th>
+                            <th>库存数量</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>预制梁</td>
+                            <td>56根</td>
+                            <td><span class="badge badge-success">充足</span></td>
+                        </tr>
+                        <tr>
+                            <td>预制板</td>
+                            <td>128块</td>
+                            <td><span class="badge badge-success">充足</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 19. 质量检验
+function generatePrefabInspectionContent() {
+    return `
+        <div class="module-header">
+            <h1 class="module-title"><i class="fas fa-search"></i><span>质量检验</span></h1>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">今日检验任务</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>检验项目</th>
+                            <th>检验员</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>预制梁强度</td>
+                            <td>质检员-王工</td>
+                            <td><span class="badge badge-success">已完成</span></td>
+                        </tr>
+                        <tr>
+                            <td>预制板尺寸</td>
+                            <td>质检员-李工</td>
+                            <td><span class="badge badge-warning">进行中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 20. 全局导出所有增强函数
+window.generateSafetyInspectionContent = generateSafetyInspectionContent;
+window.generateSafetyMonitorContent = generateSafetyMonitorContent;
+window.generateSafetyPPEContent = generateSafetyPPEContent;
+window.generateQualityIssueContent = generateQualityIssueContent;
+window.generateQualityCheckContent = generateQualityCheckContent;
+window.generateQualitySummaryContent = generateQualitySummaryContent;
+window.generateMaterialPurchaseContent = generateMaterialPurchaseContent;
+window.generateMaterialReceiveContent = generateMaterialReceiveContent;
+window.generateMaterialInventoryContent = generateMaterialInventoryContent;
+window.generatePersonnelRosterContent = generatePersonnelRosterContent;
+window.generatePersonnelAttendanceContent = generatePersonnelAttendanceContent;
+window.generateEquipmentTowerContent = generateEquipmentTowerContent;
+window.generateEquipmentBridgeContent = generateEquipmentBridgeContent;
+window.generateEquipmentElevatorContent = generateEquipmentElevatorContent;
+window.generateMixingConcreteContent = generateMixingConcreteContent;
+window.generateMixingWorkorderContent = generateMixingWorkorderContent;
+window.generatePrefabProductionContent = generatePrefabProductionContent;
+window.generatePrefabStockContent = generatePrefabStockContent;
+window.generatePrefabInspectionContent = generatePrefabInspectionContent;
+
+console.log('✅ 所有增强功能函数已加载完成！');
         console.log('JavaScript加载完成 - 增强版');
     </script>
 </body>
