@@ -68,11 +68,15 @@
         }
         .btn-primary { background: var(--secondary); color: white; }
         .btn-primary:hover { background: #2980b9; }
+        .btn-light { background: #f8f9fa; color: #495057; border: 1px solid #dee2e6; }
+        .btn-light:hover { background: #e9ecef; }
         
         .card {
             background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 20px; margin-bottom: 20px;
         }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .card-title { margin: 0; color: var(--primary); }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card {
@@ -87,6 +91,37 @@
         .stat-content { flex: 1; }
         .stat-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
         .stat-label { font-size: 0.9rem; color: #95a5a6; }
+        .stat-change { font-size: 0.8rem; margin-top: 5px; }
+        .stat-change.positive { color: var(--success); }
+        .stat-change.negative { color: var(--danger); }
+        
+        .table-container { overflow-x: auto; margin-bottom: 20px; }
+        .table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        .table th, .table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        .table th { background: #f8f9fa; font-weight: 600; color: var(--primary); }
+        .table tr:hover { background: #f8f9fa; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 500; color: #555; }
+        .form-control {
+            width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 5px;
+            font-size: 0.95rem; transition: border-color 0.3s;
+        }
+        .form-control:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+        
+        .form-check { display: flex; align-items: center; margin-bottom: 10px; }
+        .form-check-input { margin-right: 10px; }
+        .form-check-label { margin: 0; }
+        
+        .badge {
+            display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500;
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        
+        .progress { height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; margin: 10px 0; }
+        .progress-bar { height: 100%; background: var(--secondary); border-radius: 5px; transition: width 0.3s; }
         
         @media (max-width: 768px) {
             .sidebar { width: 220px; }
@@ -120,9 +155,7 @@
         <div class="sidebar-header">
             <h3><i class="fas fa-tachometer-alt"></i><span>工作台</span></h3>
         </div>
-        <div class="sidebar-menu" id="sidebarMenu">
-            <!-- 菜单将通过JavaScript动态生成 -->
-        </div>
+        <div class="sidebar-menu" id="sidebarMenu"></div>
     </div>
     
     <div class="main-content">
@@ -147,89 +180,48 @@
     </div>
 
     <script>
-        // ========== 紧急修复版本 ==========
-        // 简化JavaScript，确保无语法错误
+        // ========== 核心JavaScript ==========
         
         // 1. 菜单数据
         var menuData = [
-            {
-                id: 'progress',
-                name: '进度管理',
-                icon: 'fa-chart-line',
-                submenus: [
-                    { id: 'overview', name: '工程进度', icon: 'fa-tachometer-alt' },
-                    { id: 'report', name: '进度填报', icon: 'fa-file-upload' }
-                ]
-            },
-            {
-                id: 'safety',
-                name: '安全管理',
-                icon: 'fa-shield-alt',
-                submenus: [
-                    { id: 'hazard', name: '安全隐患', icon: 'fa-exclamation-triangle' },
-                    { id: 'inspection', name: '安全巡检', icon: 'fa-clipboard-check' },
-                    { id: 'monitor', name: '视频监控', icon: 'fa-video' },
-                    { id: 'ppe', name: 'PPE申请', icon: 'fa-hard-hat' }
-                ]
-            },
-            {
-                id: 'quality',
-                name: '质量管理',
-                icon: 'fa-award',
-                submenus: [
-                    { id: 'issue', name: '质量隐患', icon: 'fa-exclamation-circle' },
-                    { id: 'check', name: '质量巡检', icon: 'fa-check-double' },
-                    { id: 'summary', name: '质量月总结', icon: 'fa-chart-bar' }
-                ]
-            },
-            {
-                id: 'material',
-                name: '材料管理',
-                icon: 'fa-boxes',
-                submenus: [
-                    { id: 'purchase', name: '材料请购', icon: 'fa-shopping-cart' },
-                    { id: 'receive', name: '材料领用', icon: 'fa-hand-holding' },
-                    { id: 'inventory', name: '库存管理', icon: 'fa-warehouse' }
-                ]
-            },
-            {
-                id: 'personnel',
-                name: '人员管理',
-                icon: 'fa-users',
-                submenus: [
-                    { id: 'roster', name: '花名册', icon: 'fa-address-book' },
-                    { id: 'attendance', name: '人员考勤', icon: 'fa-calendar-check' }
-                ]
-            },
-            {
-                id: 'equipment',
-                name: '设备管理',
-                icon: 'fa-cogs',
-                submenus: [
-                    { id: 'tower', name: '塔机监测', icon: 'fa-crane' },
-                    { id: 'bridge', name: '架桥机监测', icon: 'fa-bridge' },
-                    { id: 'elevator', name: '升降机监测', icon: 'fa-elevator' }
-                ]
-            },
-            {
-                id: 'mixing',
-                name: '拌合站管理',
-                icon: 'fa-industry',
-                submenus: [
-                    { id: 'concrete', name: '混凝土浇筑令', icon: 'fa-truck-mix' },
-                    { id: 'workorder', name: '工单确认', icon: 'fa-clipboard-list' }
-                ]
-            },
-            {
-                id: 'prefab',
-                name: '预制场管理',
-                icon: 'fa-building',
-                submenus: [
-                    { id: 'production', name: '生产管理', icon: 'fa-industry' },
-                    { id: 'stock', name: '库存管理', icon: 'fa-boxes-stacked' },
-                    { id: 'inspection', name: '质量检验', icon: 'fa-check-circle' }
-                ]
-            }
+            { id: 'progress', name: '进度管理', icon: 'fa-chart-line', submenus: [
+                { id: 'overview', name: '工程进度', icon: 'fa-tachometer-alt' },
+                { id: 'report', name: '进度填报', icon: 'fa-file-upload' }
+            ]},
+            { id: 'safety', name: '安全管理', icon: 'fa-shield-alt', submenus: [
+                { id: 'hazard', name: '安全隐患', icon: 'fa-exclamation-triangle' },
+                { id: 'inspection', name: '安全巡检', icon: 'fa-clipboard-check' },
+                { id: 'monitor', name: '视频监控', icon: 'fa-video' },
+                { id: 'ppe', name: 'PPE申请', icon: 'fa-hard-hat' }
+            ]},
+            { id: 'quality', name: '质量管理', icon: 'fa-award', submenus: [
+                { id: 'issue', name: '质量隐患', icon: 'fa-exclamation-circle' },
+                { id: 'check', name: '质量巡检', icon: 'fa-check-double' },
+                { id: 'summary', name: '质量月总结', icon: 'fa-chart-bar' }
+            ]},
+            { id: 'material', name: '材料管理', icon: 'fa-boxes', submenus: [
+                { id: 'purchase', name: '材料请购', icon: 'fa-shopping-cart' },
+                { id: 'receive', name: '材料领用', icon: 'fa-hand-holding' },
+                { id: 'inventory', name: '库存管理', icon: 'fa-warehouse' }
+            ]},
+            { id: 'personnel', name: '人员管理', icon: 'fa-users', submenus: [
+                { id: 'roster', name: '花名册', icon: 'fa-address-book' },
+                { id: 'attendance', name: '人员考勤', icon: 'fa-calendar-check' }
+            ]},
+            { id: 'equipment', name: '设备管理', icon: 'fa-cogs', submenus: [
+                { id: 'tower', name: '塔机监测', icon: 'fa-crane' },
+                { id: 'bridge', name: '架桥机监测', icon: 'fa-bridge' },
+                { id: 'elevator', name: '升降机监测', icon: 'fa-elevator' }
+            ]},
+            { id: 'mixing', name: '拌合站管理', icon: 'fa-industry', submenus: [
+                { id: 'concrete', name: '混凝土浇筑令', icon: 'fa-truck-mix' },
+                { id: 'workorder', name: '工单确认', icon: 'fa-clipboard-list' }
+            ]},
+            { id: 'prefab', name: '预制场管理', icon: 'fa-building', submenus: [
+                { id: 'production', name: '生产管理', icon: 'fa-industry' },
+                { id: 'stock', name: '库存管理', icon: 'fa-boxes-stacked' },
+                { id: 'inspection', name: '质量检验', icon: 'fa-check-circle' }
+            ]}
         ];
 
         // 2. 初始化菜单
@@ -346,24 +338,16 @@
             
             if (key === 'progress-overview') {
                 title = '工程进度总览';
-                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-chart-line"></i><span>' + title + '</span></h1></div>' +
-                         '<div class="stats-grid">' +
-                         '<div class="stat-card"><div class="stat-icon" style="background: var(--success);"><i class="fas fa-check-circle"></i></div><div class="stat-content"><div class="stat-value">78%</div><div class="stat-label">总体进度</div></div></div>' +
-                         '<div class="stat-card"><div class="stat-icon" style="background: var(--warning);"><i class="fas fa-clock"></i></div><div class="stat-content"><div class="stat-value">12</div><div class="stat-label">延期任务</div></div></div>' +
-                         '</div>' +
-                         '<div class="card"><h3>关键路径分析</h3><p>显示工程进度分析内容。</p></div>';
+                content = generateEnhancedProgressOverview();
             } else if (key === 'progress-report') {
                 title = '进度填报';
-                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-file-upload"></i><span>' + title + '</span></h1></div>' +
-                         '<div class="card"><h3>进度填报表单</h3><p>显示进度填报表单。</p></div>';
+                content = generateEnhancedProgressReport();
             } else if (key === 'safety-hazard') {
                 title = '安全隐患管理';
-                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-exclamation-triangle"></i><span>' + title + '</span></h1></div>' +
-                         '<div class="card"><h3>隐患整改跟踪</h3><p>显示安全隐患管理内容。</p></div>';
+                content = generateSafetyHazardContent();
             } else {
                 title = menuId + ' - ' + submenuId;
-                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-cogs"></i><span>' + title + '</span></h1></div>' +
-                         '<div class="card"><h3>功能开发中</h3><p>该功能页面正在开发中。</p></div>';
+                content = '<div class="module-header"><h1 class="module-title"><i class="fas fa-cogs"></i><span>' + title + '</span></h1></div><div class="card"><h3>功能开发中</h3><p>该功能页面正在开发中。</p></div>';
             }
             
             container.innerHTML = '<div class="module-content active">' + content + '</div>';
@@ -385,7 +369,7 @@
 
         // 7. 页面初始化
         function initializePage() {
-            console.log('智慧工地平台 - 紧急修复版加载');
+            console.log('智慧工地平台 - 增强版加载');
             
             // 初始化菜单
             initMenu();
